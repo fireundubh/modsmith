@@ -19,7 +19,7 @@
 * Inside the project path, there should be a Data and Localization folder. Localization is optional. The `mod.manifest` file should also be placed at this level. The manifest file is required.
 * The hierarchy for each folder should imitate the hierarchy needed for the mod.
 * The Build folder will be created automatically.
-* **IMPORTANT:** XML tables should contain ONLY the modified rows. Modsmith will effectively "import" the modified rows into the base tables at package time, and generate new XML files using your modified rows. This allows you to focus on your mod and stay organized.
+* **IMPORTANT:** XML tables should contain ONLY the modified rows. Modsmith will effectively "import" the modified rows into the base tables at package time, and generate new XML files using your modified rows.
 
 ## Configuration
 
@@ -54,8 +54,8 @@ python modsmith.zip -p "E:\projects\KCD More Perks" -d "More Perks.pak" -r "More
 Modsmith will generate folders and files in the Build folder.
 
 * The first folder that contains everything will be named after the mod, using the name of the redistributable ZIP without the extension (e.g., `More Perks.zip` becomes `More Perks`.)
-* The data PAK will be generated in the Data folder and named using value provided with the `-d`/`--data-package` argument.
+* The data PAK will be generated in the Data folder and named using the value provided by the `-d` argument.
 * The localization PAK, or multiple PAKs, will be generated in the Localization folder.
-* Finally, the entire mod, including only the essential files, will be generated in the Build folder. This is the redistributable ZIP that can be uploaded to the Nexus or wherever. You should also use this ZIP to extract the mod to your Mods folder for testing.
+* Finally, the entire mod will be generated in the Build folder. This is the redistributable ZIP that can be uploaded to the Nexus or wherever. You should also use this ZIP to extract the mod to your Mods folder for testing.
 
 ![Example Output](https://i.imgur.com/jHpbhBJ.jpg)
