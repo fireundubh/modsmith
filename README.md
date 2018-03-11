@@ -5,8 +5,8 @@
 ## Features
 
 * Automatically packages Kingdom Come: Deliverance mods for distribution
-* Merges modified XML tables with vanilla XML tables at package time
-* XML merger currently supports only perk and buff tables
+* Merges modified XML tables with vanilla tables at package time (supports perk and buff tables currently)
+* Generates zero-byte TBL files as needed at package time
 
 ## Requirements
 
