@@ -35,6 +35,12 @@ class Package:
         files = [f for f in glob.glob(os.path.join(self.data_path, '**\*'), recursive=True) if os.path.isfile(f)]
         for file in files:
             if file.endswith('.xml'):
+                # try to create zero-byte .tbl files
+                tbl_file = file.replace('.xml', '.tbl').replace(self.data_path, self.redist_data_path)
+                if tbl_file not in files:
+                    if not os.path.exists(tbl_file):
+                        open(tbl_file, 'w').close()
+                    files.append(tbl_file)
                 self.data_xml_files.append(file)
 
         self.patch_data()
@@ -43,7 +49,7 @@ class Package:
         with zipfile.ZipFile(redist_pak_path, 'w', zipfile.ZIP_STORED) as zip_file:
             non_xml_files = [f for f in files if not f.endswith('.xml')]
             for file in non_xml_files:
-                zip_file.write(file, file.replace(self.data_path, ''))
+                zip_file.write(file, file.replace(self.data_path, '') if not file.endswith('.tbl') else file.replace(self.redist_data_path, ''))
             for file in self.data_xml_files:
                 zip_file.write(file.replace(self.data_path, self.redist_data_path), file.replace(self.data_path, ''))
 
