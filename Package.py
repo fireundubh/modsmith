@@ -3,6 +3,7 @@
 import configparser
 import glob
 import os
+import sys
 import zipfile
 
 from lxml import etree
@@ -27,7 +28,11 @@ class Package:
         self.manifest_arcname = os.path.join(self.redist_name, 'mod.manifest')
         self.manifest = [self.manifest_path, self.manifest_arcname]
         self.config = configparser.ConfigParser()
-        self.config.read(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'app.conf'))
+        if os.path.exists('modsmith.conf'):
+            self.config.read('modsmith.conf')
+        else:
+            sys.tracebacklimit = 0
+            raise FileNotFoundError('Cannot find modsmith.conf, exiting')
 
     def generate_pak(self):
         os.makedirs(self.redist_data_path, exist_ok=True)
@@ -39,6 +44,7 @@ class Package:
                 tbl_file = file.replace('.xml', '.tbl').replace(self.data_path, self.redist_data_path)
                 if tbl_file not in files:
                     if not os.path.exists(tbl_file):
+                        os.makedirs(os.path.dirname(tbl_file), exist_ok=True)
                         open(tbl_file, 'w').close()
                     files.append(tbl_file)
                 self.data_xml_files.append(file)
