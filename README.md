@@ -23,7 +23,7 @@
 
 ## Configuration
 
-`app.conf` needs to be edited. `Path` should be set to the root path of the game.
+`modsmith.conf` needs to be edited. `Path` should be set to the root path of the game.
 
 ### Example
 ```
