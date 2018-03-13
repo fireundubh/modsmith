@@ -13,8 +13,16 @@ def main():
         raise FileNotFoundError('Cannot find modsmith.conf, exiting')
 
     package = Package(args.project, args.data_package, args.redist)
-    package.generate_pak()
-    package.generate_i18n()
+
+    # create pak, if project has game data
+    if os.path.exists(package.data_path):
+        package.generate_pak()
+
+    # create localization paks, if project has localization
+    if os.path.exists(package.i18n_project_path):
+        package.generate_i18n()
+
+    # create redistributable
     package.pack()
 
 
