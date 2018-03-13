@@ -29,7 +29,7 @@ def main():
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Modsmith by fireundubh')
     parser.add_argument('-p', '--project', action='store', required=True, default=None, help='Input project path')
-    parser.add_argument('-d', '--data-package', action='store', required=True, default=None, help='Output PAK filename')
+    parser.add_argument('-d', '--data-package', action='store', default=None, help='Output PAK filename')
     parser.add_argument('-r', '--redist', action='store', required=True, default=None, help='Redistributable ZIP filename')
     args = parser.parse_args()
     main()
