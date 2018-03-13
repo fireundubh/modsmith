@@ -10,9 +10,13 @@ from Package import Package
 def main():
     if not os.path.exists('modsmith.conf'):
         sys.tracebacklimit = 0
-        raise FileNotFoundError('Cannot find modsmith.conf, exiting')
+        raise FileNotFoundError('Cannot find modsmith.conf, exiting...')
 
     package = Package(args.project, args.data_package, args.redist)
+
+    if not os.path.exists(package.manifest_path):
+        sys.tracebacklimit = 0
+        raise FileNotFoundError('Cannot find mod.manifest in project root, exiting...')
 
     # create pak, if project has game data
     if os.path.exists(package.data_path):
