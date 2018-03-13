@@ -2,24 +2,20 @@
 
 import argparse
 import os
+import sys
 
 from Package import Package
 
 
 def main():
-    if not args.data_package:
-        return
+    if not os.path.exists('modsmith.conf'):
+        sys.tracebacklimit = 0
+        raise FileNotFoundError('Cannot find modsmith.conf, exiting')
 
     package = Package(args.project, args.data_package, args.redist)
-
-    if os.path.exists(package.data_path):
-        package.generate_pak()
-
-    if os.path.exists(package.i18n_project_path):
-        package.generate_i18n()
-
-    if args.redist:
-        package.pack()
+    package.generate_pak()
+    package.generate_i18n()
+    package.pack()
 
 
 if __name__ == '__main__':

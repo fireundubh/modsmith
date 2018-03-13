@@ -28,11 +28,7 @@ class Package:
         self.manifest_arcname = os.path.join(self.redist_name, 'mod.manifest')
         self.manifest = [self.manifest_path, self.manifest_arcname]
         self.config = configparser.ConfigParser()
-        if os.path.exists('modsmith.conf'):
-            self.config.read('modsmith.conf')
-        else:
-            sys.tracebacklimit = 0
-            raise FileNotFoundError('Cannot find modsmith.conf, exiting')
+        self.config.read('modsmith.conf')
 
     def generate_pak(self):
         os.makedirs(self.redist_data_path, exist_ok=True)
