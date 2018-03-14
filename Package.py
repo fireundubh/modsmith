@@ -137,7 +137,7 @@ class Package:
                             output_xml[0][1].append(input_row)
 
                     # write output xml
-                    Utils.write_output_xml(output_xml, os.path.join(self.redist_data_path, *xml_file))
+                    Utils.write_output_xml(output_xml, os.path.join(self.redist_data_path, *xml_file), False)
 
     def patch_i18n(self):
         # cull project path from xml file list
@@ -186,4 +186,4 @@ class Package:
             output_xml[:] = sorted(tree, key=lambda x: x.xpath('Cell/text()'))
 
             # write output xml
-            Utils.write_output_xml(output_xml, os.path.join(self.i18n_redist_path, *xml_file))
+            Utils.write_output_xml(output_xml, os.path.join(self.i18n_redist_path, *xml_file), True)

@@ -124,6 +124,10 @@ class Utils:
         return {'xml_path': xml_path, 'xml_rows': rows}
 
     @staticmethod
-    def write_output_xml(xml_data, file_path):
-        with open(file_path, 'w', encoding='utf8') as f:
-            f.write(etree.tostring(xml_data, pretty_print=True).decode('unicode-escape'))
+    def write_output_xml(xml_data, file_path, i18n=False):
+        if i18n:
+            with open(file_path, 'w', encoding='utf8') as f:
+                f.write(etree.tostring(xml_data, pretty_print=True).decode('unicode-escape'))
+        else:
+            et = etree.ElementTree(xml_data)
+            et.write(file_path, encoding='us-ascii', xml_declaration=True, pretty_print=True)
