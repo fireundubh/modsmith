@@ -103,12 +103,12 @@ class Package:
             # determine which pak to read based on xml file path - requires a dictionary in Utils
             pak_file_name = Utils.get_pak_by_path(xml_data['xml_path'])
             if not pak_file_name:
-                raise NotImplemented('Could not find pak based on file path: ', xml_data['xml_path'])
+                raise Exception('Could not find pak based on file path: ', xml_data['xml_path'])
 
             # determine which key to read based on xml file name - requires a dictionary in Utils
             row_key = Utils.get_key_by_filename(xml_file[1])
             if not row_key:
-                raise NotImplemented('Could not find key based on file name: ', xml_file[1])
+                raise Exception('Could not find key based on file name: ', xml_file[1])
 
             # load pak
             game_data_path = os.path.join(self.config['Game']['Path'], 'Data', pak_file_name)
@@ -126,7 +126,7 @@ class Package:
                         # determine whether a row with the key already exists
                         output_rows = output_xml.findall(f"table/rows/row[@{row_key}='{input_row.get(row_key)}']")
                         if len(output_rows) > 1:
-                            raise NotImplemented('Found more than one output row, probably a duplicate: ', output_rows)
+                            raise Exception('Found more than one output row, probably a duplicate: ', output_rows)
 
                         # if the row with key exists, remove the row and add the input row
                         # else assume the input row is new and add the row to the output
