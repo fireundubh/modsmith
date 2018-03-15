@@ -68,7 +68,7 @@ class Patcher:
 
                         # if the row with key exists, remove the row and add the input row
                         # else assume the input row is new and add the row to the output
-                        if output_rows is not None:
+                        if output_rows is not None and len(output_rows) != 0:
                             output_xml[0][1].remove(output_rows[0])
                             output_xml[0][1].append(input_row)
                         else:
