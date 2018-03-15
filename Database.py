@@ -3,11 +3,13 @@
 DATA_MAP = {
     'Data\Scripts': 'Scripts.pak',
     'Data\Libs\Tables': 'Tables.pak',
-    'Data\Libs': 'Scripts.pak',
+    'Data\Libs\AI': 'Scripts.pak',
+    'Data\Libs\Haste': 'Scripts.pak',
     'Data\Entities': 'Scripts.pak',
 }
 
 SIGNATURES = {
+    # -------------------------------------------------------------------------
     # Data/Libs/Tables
     # -------------------------------------------------------------------------
     'character_beard': 'character_beard_id',
@@ -22,6 +24,7 @@ SIGNATURES = {
     'random_event_option_set': 'random_event_option_set_id',
     'random_event_source_type': 'random_event_source_type_id',
 
+    # -------------------------------------------------------------------------
     # Data/Libs/Tables/action
     # -------------------------------------------------------------------------
     'actor_action_fragment_id_mapping': 'actor_action_fragment_id_mapping_id',
@@ -33,6 +36,7 @@ SIGNATURES = {
     'actor_pose': 'actor_pose_id',
     'actor_tag_mapping': 'mn_tag',
 
+    # -------------------------------------------------------------------------
     # Data/Libs/Tables/ai
     # -------------------------------------------------------------------------
     'ai_body': 'ai_body_id',
@@ -99,6 +103,7 @@ SIGNATURES = {
     'subbrain_switching': 'subbrain_id',
     'subbrain_type': 'subbrain_type_id',
 
+    # -------------------------------------------------------------------------
     # Data/Libs/Tables/animation
     # -------------------------------------------------------------------------
     'ai_fragment_exclude': 'ai_fragment_exclude_id',
@@ -112,6 +117,7 @@ SIGNATURES = {
     'mn_fragment': 'mn_fragment_id',
     'picking': ['actor_class_hash', 'mn_frag_tag_state'],
 
+    # -------------------------------------------------------------------------
     # Data/Libs/Tables/combat
     # -------------------------------------------------------------------------
     'combat_action_attack': 'mn_tags',
@@ -162,11 +168,13 @@ SIGNATURES = {
     'combat_zone_mapping': ['src_zone_id', 'dst_zone_id', 'weapon_class_id', 'combat_input_class_id', 'combat_attack_type_id', 'combat_action_type_id'],
     'combat_zone_tag': 'combat_zone_id',
 
+    # -------------------------------------------------------------------------
     # Data/Libs/Tables/DBEntity
     # -------------------------------------------------------------------------
     'entity_link': ['entity_id', 'target_id'],
     'stash': 'stash_id',
 
+    # -------------------------------------------------------------------------
     # Data/Libs/Tables/inventory
     # -------------------------------------------------------------------------
     'inventory': 'item_id',
@@ -175,6 +183,7 @@ SIGNATURES = {
     'inventory_preset': 'inventory_preset_id',
     'inventory_preset2item': ['inventory_preset_id', 'item_id'],
 
+    # -------------------------------------------------------------------------
     # Data/Libs/Tables/item
     # -------------------------------------------------------------------------
     'alchemy_base': 'item_id',
@@ -264,11 +273,13 @@ SIGNATURES = {
     'weapon_preset': 'weapon_preset_id',
     'weapon_sub_class': 'weapon_sub_class_id',
 
+    # -------------------------------------------------------------------------
     # Data/Libs/Tables/prefab
     # -------------------------------------------------------------------------
     'prefab_phase': ['order', 'prefabfullname'],
     'prefab_phase_category': 'prefab_phase_category_id',
 
+    # -------------------------------------------------------------------------
     # Data/Libs/Tables/quest
     # -------------------------------------------------------------------------
     'exp_change': 'exp_change_id',
@@ -296,6 +307,7 @@ SIGNATURES = {
     'quest_type': 'quest_type_id',
     'quest_vip_npc': ['quest_id', 'quest_npc_id'],
 
+    # -------------------------------------------------------------------------
     # Data/Libs/Tables/rpg
     # -------------------------------------------------------------------------
     'achievement': 'achievement_id',
@@ -366,6 +378,7 @@ SIGNATURES = {
     'v_soul2role_metarole': 'soul_id',
     'v_soul_character_data': 'soul_id',
 
+    # -------------------------------------------------------------------------
     # Data/Libs/Tables/shop
     # -------------------------------------------------------------------------
     'shop': 'shop_id',
@@ -373,6 +386,7 @@ SIGNATURES = {
     'shop_type2item': ['shop_type_id', 'item_id'],
     'shopkeeper': 'keeper_id',
 
+    # -------------------------------------------------------------------------
     # Data/Libs/Tables/skald
     # -------------------------------------------------------------------------
     'skald_objective': 'skald_element_id',
@@ -381,6 +395,7 @@ SIGNATURES = {
     'skald_quest_string': 'string_name',
     'skald_quest_string_type': 'skald_quest_string_type_id',
 
+    # -------------------------------------------------------------------------
     # Data/Libs/Tables/text
     # -------------------------------------------------------------------------
     'branch': 'skald_element_id',
@@ -404,6 +419,7 @@ SIGNATURES = {
     'v_topic2subchapter_id': ['skald_subchapter_id', 'start_topic'],
     'v_voice_abbreviation': 'voice_id',
 
+    # -------------------------------------------------------------------------
     # Data/Libs/Tables/ui
     # -------------------------------------------------------------------------
     'cf_backer_ingame': 'cf_backer_id',
