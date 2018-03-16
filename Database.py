@@ -1,5 +1,6 @@
 # coding=utf-8
 
+# These mappings allow Modsmith to find PAKs based on file path.
 DATA_MAP = {
     'Data\Scripts': 'Scripts.pak',
     'Data\Libs\Tables': 'Tables.pak',
@@ -8,6 +9,62 @@ DATA_MAP = {
     'Data\Entities': 'Scripts.pak',
 }
 
+# Non-table XML files are copied directly instead of patched.
+EXCLUSIONS = {
+    'Data\_fastload',
+    'Data\Animations',
+    'Data\Engine',
+    'Data\Entities',
+    'Data\Levels',
+    'Data\Materials',
+    'Data\Music',
+    'Data\Objects',
+    'Data\Patch',
+    'Data\Prefabs',
+    'Data\Scripts',
+    'Data\Libs\ActionGraphs',
+    'Data\Libs\AI',
+    'Data\Libs\AIBrain',
+    'Data\Libs\Animation',
+    'Data\Libs\AnimationGraphTemplates',
+    'Data\Libs\BodyDamage',
+    'Data\Libs\Clouds',
+    'Data\Libs\Communication',
+    'Data\Libs\Config',
+    'Data\Libs\CryHttp',
+    'Data\Libs\Dialogs',
+    'Data\Libs\EntityArchetypes',
+    'Data\Libs\EquipmentPacks',
+    'Data\Libs\Flares',
+    'Data\Libs\FlowgraphModules',
+    'Data\Libs\FlowNodes',
+    'Data\Libs\GameAudio',
+    'Data\Libs\GameForceFeedback',
+    'Data\Libs\GameTokens',
+    'Data\Libs\Haste',
+    'Data\Libs\Items',
+    'Data\Libs\Levels',
+    'Data\Libs\LightningArc',
+    'Data\Libs\Localization',
+    'Data\Libs\LuaXML',
+    'Data\Libs\MaterialEffects',
+    'Data\Libs\MovementTransitions',
+    'Data\Libs\MusicLogic',
+    'Data\Libs\Particles',
+    'Data\Libs\quests',
+    'Data\Libs\Readability',
+    'Data\Libs\ReverbPresets',
+    'Data\Libs\SmartObjects',
+    'Data\Libs\SoundMoods',
+    'Data\Libs\splinedistr',
+    'Data\Libs\Storm',
+    'Data\Libs\Telemetry',
+    'Data\Libs\\UI',
+    'Data\Libs\Weather',
+}
+
+# These mappings allow Modsmith to determine which rows to add and remove.
+# A signature consists of the minimum number of attributes that makes a row unique.
 SIGNATURES = {
     # -------------------------------------------------------------------------
     # Data/Libs/Tables

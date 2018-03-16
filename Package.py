@@ -5,6 +5,7 @@ import glob
 import os
 import zipfile
 
+from Database import EXCLUSIONS
 from Patcher import Patcher
 
 
@@ -30,19 +31,23 @@ class Package:
     def generate_tbl(self, file, files):
         # try to create zero-byte .tbl files
         tbl_file = file.replace('.xml', '.tbl').replace(self.data_path, self.redist_data_path)
+
         if tbl_file not in files:
             if not os.path.exists(tbl_file):
                 os.makedirs(os.path.dirname(tbl_file), exist_ok=True)
                 open(tbl_file, 'w').close()
+
             files.append(tbl_file)
 
     def generate_pak(self):
         os.makedirs(self.redist_data_path, exist_ok=True)
 
         files = [f for f in glob.glob(os.path.join(self.data_path, '**\*'), recursive=True) if os.path.isfile(f)]
+
         for file in files:
             if not file.endswith('.xml'):
                 continue
+
             self.generate_tbl(file, files)
             self.data_xml_files.append(file)
 
@@ -53,10 +58,17 @@ class Package:
 
         with zipfile.ZipFile(redist_pak_path, 'w', zipfile.ZIP_STORED) as zip_file:
             non_xml_files = [f for f in files if not f.endswith('.xml')]
+            supported_xml_files = [f for f in self.data_xml_files if not any(x in f for x in EXCLUSIONS)]
+            unsupported_xml_files = [f for f in self.data_xml_files if any(x in f for x in EXCLUSIONS)]
+
             for file in non_xml_files:
                 zip_file.write(file, file.replace(self.data_path, '') if not file.endswith('.tbl') else file.replace(self.redist_data_path, ''))
-            for file in self.data_xml_files:
+
+            for file in supported_xml_files:
                 zip_file.write(file.replace(self.data_path, self.redist_data_path), file.replace(self.data_path, ''))
+
+            for file in unsupported_xml_files:
+                zip_file.write(file, file.replace(self.data_path, ''))
 
         print('Wrote package:\t%s' % redist_pak_path)
 
@@ -68,6 +80,7 @@ class Package:
             os.makedirs(lang_path, exist_ok=True)
 
             files = glob.glob(os.path.join(self.i18n_project_path, lang, '*.xml'), recursive=False)
+
             for file in files:
                 self.i18n_xml_files.append(file)
 

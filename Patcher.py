@@ -5,6 +5,7 @@ import zipfile
 
 from lxml import etree
 
+from Database import EXCLUSIONS
 from Utils import Utils
 
 
@@ -22,19 +23,29 @@ class Patcher:
         self.i18n_xml_files = package.i18n_xml_files
 
     def patch_data(self):
+        """
+        Copy source, replace existing rows with modified rows, and append assumed new rows that cannot be found in source.
+        Write out XML to file in the redistributable path.
+        """
+
+        # cull excluded paths from xml file list
+        supported_xml_files = [f for f in self.data_xml_files if not any(x in f for x in EXCLUSIONS)]
+
         # cull project path from xml file list
-        xml_files = Utils.setup_xml_files(self.data_path, self.data_xml_files)
+        xml_files = Utils.setup_xml_files(self.data_path, supported_xml_files)
 
         for xml_file in xml_files:
             xml_data = Utils.setup_xml_data(self.data_path, xml_file)
 
             # determine which pak to read based on xml file path - requires a dictionary in Utils
             pak_file_name = Utils.get_pak_by_path(xml_data['xml_path'])
+
             if not pak_file_name:
                 raise Exception('Cannot find PAK based on file path: ', xml_data['xml_path'])
 
             # determine which key to read based on xml file name - requires a dictionary in Utils
             signature = Utils.get_signature_by_filename(xml_file[1])
+
             if not signature:
                 raise Exception('Cannot find signature based on file path: ', xml_file[1])
 
@@ -78,6 +89,11 @@ class Patcher:
                     Utils.write_output_xml(output_xml, os.path.join(self.redist_data_path, *xml_file), False)
 
     def patch_i18n(self):
+        """
+        Construct XML in memory, seed with modified rows, and append unmodified source rows.
+        Write out XML to file in the redistributable path.
+        """
+
         # cull project path from xml file list
         xml_files = Utils.setup_xml_files(self.i18n_project_path, self.i18n_xml_files)
 
@@ -87,19 +103,23 @@ class Patcher:
 
             # create output xml
             output_xml = etree.Element('Table')
+
             for row in xml_data['xml_rows']:
                 output_xml.append(row)
 
             # create row data for comparing keys
             row_keys = []
+
             for row in output_xml:
                 key, original_text, translated_text = [r for r in row.findall('Cell')]
                 row_keys.append(key.text)
+
             if not row_keys:
                 raise Exception('row_keys empty')
 
             # read zipped pak xml
             lang_pak_path = os.path.join(self.config['Game']['Path'], 'Localization', xml_file[0] + '.pak')
+
             with zipfile.ZipFile(lang_pak_path, mode='r') as pak_file:
                 with pak_file.open(xml_file[1], mode='r') as pak_xml:
                     lines = pak_xml.readlines()
