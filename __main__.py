@@ -10,24 +10,39 @@ from Package import Package
 def main():
     if not os.path.exists('modsmith.conf'):
         sys.tracebacklimit = 0
-        raise FileNotFoundError('Cannot find modsmith.conf, exiting...')
+        raise FileNotFoundError('Cannot find modsmith.conf\n'
+                                '\tPossible reasons:\n'
+                                '\t\t1. The modsmith.conf file does not exist in the Modsmith install path.\n'
+                                '\t\t2. The working directory was not set to the Modsmith install path.')
 
     package = Package(args.project, args.data_package, args.redist)
 
     if not os.path.exists(package.manifest_path):
         sys.tracebacklimit = 0
-        raise FileNotFoundError('Cannot find mod.manifest in project root, exiting...')
+        raise FileNotFoundError('Cannot find mod.manifest in project root\n'
+                                '\tAll mods require a manifest. Please create a mod.manifest file in the project root.')
 
     # create pak, if project has game data
     if os.path.exists(package.data_path):
         package.generate_pak()
+    else:
+        print('\n[WARN] Cannot find Data in project root. Skipping PAK generation.')
 
     # create localization paks, if project has localization
     if os.path.exists(package.i18n_project_path):
         package.generate_i18n()
+    else:
+        print('\n[WARN] Cannot find Localization in project root. Skipping PAK generation.')
 
     # create redistributable
-    package.pack()
+    if os.path.exists(package.redist_path):
+        package.pack()
+    else:
+        sys.tracebacklimit = 0
+        raise NotADirectoryError('Cannot package mod because Build directory was not found\n'
+                                 '\tPossible reasons:\n'
+                                 '\t\t1. Project has no Data.\n'
+                                 '\t\t2. Project has no Localization.')
 
 
 if __name__ == '__main__':
