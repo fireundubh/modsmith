@@ -392,7 +392,7 @@ SIGNATURES = {
     'metarole': 'metarole_id',
     'morale_change': 'morale_change_id',
     'perk': 'perk_id',
-    'perk2perk_exclusivity': 'first_perk_id',
+    'perk2perk_exclusivity': ['first_perk_id', 'second_perk_id'],
     'perk_buff': 'buff_id',
     'perk_buff_override': 'perk_id',
     'perk_codex': 'perk_id',
