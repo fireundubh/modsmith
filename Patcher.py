@@ -1,5 +1,6 @@
 # coding=utf-8
 
+import copy
 import os
 import zipfile
 
@@ -11,6 +12,11 @@ from Utils import Utils
 
 class Patcher:
     def __init__(self, package):
+        """
+        Sets up the necessary paths for patching XML files
+
+        :param package: Instance of the Package class for the project
+        """
         self.config = package.config
         self.data_path = package.data_path
         self.data_xml_files = package.data_xml_files
@@ -22,10 +28,14 @@ class Patcher:
         self.i18n_redist_path = package.i18n_redist_path
         self.i18n_xml_files = package.i18n_xml_files
 
+    # TODO: create a system for merging xml files using mod_order.txt
+    def merge_data(self):
+        pass
+
     def patch_data(self):
         """
-        Copy source, replace existing rows with modified rows, and append assumed new rows that cannot be found in source.
-        Write out XML to file in the redistributable path.
+        Copies source, replaces existing rows with modified rows, and appends assumed new rows that cannot be found in source.
+        Writes out XML to file in the redistributable path.
         """
 
         # cull excluded paths from xml file list
@@ -41,20 +51,20 @@ class Patcher:
             pak_file_name = Utils.get_pak_by_path(xml_data['xml_path'])
 
             if not pak_file_name:
-                raise Exception('Cannot find PAK based on file path: ', xml_data['xml_path'])
+                raise Exception('Cannot find PAK based on file path', xml_data['xml_path'])
 
             # determine which key to read based on xml file name - requires a dictionary in Utils
             signature = Utils.get_signature_by_filename(xml_file[1])
 
             if not signature:
-                raise Exception('Cannot find signature based on file path: ', xml_file[1])
+                raise Exception('Cannot find signature based on file name', xml_file[1])
 
             # load pak
             game_data_path = os.path.join(self.config['Game']['Path'], 'Data', pak_file_name)
 
             with zipfile.ZipFile(game_data_path, mode='r') as pak_file:
                 # get arcname of file in archive (e.g., Libs/Tables/rpg/buff.xml)
-                packed_file = os.path.join(xml_data['xml_path'].replace(self.data_path, '')).replace('\\', '/').lstrip('/')
+                packed_file = os.path.join(os.path.relpath(xml_data['xml_path'], self.data_path)).replace(os.path.sep, '/')
 
                 # read file in archive
                 with pak_file.open(packed_file, 'r') as pak_xml:
@@ -67,7 +77,10 @@ class Patcher:
                         if isinstance(signature, str):
                             output_rows = output_xml.findall(f"table/rows/row[@{signature}='{input_row.get(signature)}']")
                             if len(output_rows) > 1:
-                                raise Exception('Found more than one output row. Reason: Duplicate or bad signature.', output_rows)
+                                raise Exception('Found more than one output row\n'
+                                                '\tPossible reasons:\n'
+                                                '\t\t1. There was a duplicate row in the XML source.\n'
+                                                '\t\t2. The signature used to find unique rows was too broad.')
                         elif isinstance(signature, list):
                             # create xpath expression for list of keys
                             xpath = []
@@ -75,7 +88,8 @@ class Patcher:
                                 xpath.append(f'@{signature[i]}="{input_row.get(signature[i])}"')
                             output_rows = output_xml.xpath('table/rows/row[%s]' % ' and '.join(xpath))
                         else:
-                            raise Exception('Something weird happened!')
+                            # this should never happen
+                            raise TypeError('Found signature was not str or list. Actual type:', type(signature))
 
                         # if the row with key exists, remove the row and add the input row
                         # else assume the input row is new and add the row to the output
@@ -88,10 +102,11 @@ class Patcher:
                     # write output xml
                     Utils.write_output_xml(output_xml, os.path.join(self.redist_data_path, *xml_file), False)
 
+    # TODO: support patching localization strings from XLSX and JSON sources
     def patch_i18n(self):
         """
-        Construct XML in memory, seed with modified rows, and append unmodified source rows.
-        Write out XML to file in the redistributable path.
+        Constructs XML in memory, seeds with modified rows, and appends unmodified source rows.
+        Writes out XML to file in the redistributable path.
         """
 
         # cull project path from xml file list
@@ -105,13 +120,20 @@ class Patcher:
             output_xml = etree.Element('Table')
 
             for row in xml_data['xml_rows']:
+                # if there is only one text cell, clone that cell
+                # this allows users to, optionally, maintain simpler localization xml files
+                if len(row) == 2:
+                    key, original_text = [c for c in row.findall('Cell')]
+                    translated_text = copy.deepcopy(original_text)
+                    row.append(translated_text)
                 output_xml.append(row)
 
             # create row data for comparing keys
             row_keys = []
 
             for row in output_xml:
-                key, original_text, translated_text = [r for r in row.findall('Cell')]
+                cells = row.findall('Cell')
+                key, original_text, translated_text = [c for c in cells]
                 row_keys.append(key.text)
 
             if not row_keys:
