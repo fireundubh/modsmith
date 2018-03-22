@@ -4,7 +4,7 @@ import argparse
 import os
 import sys
 
-from Package import Package
+from Packager import Packager
 
 
 def main():
@@ -15,28 +15,28 @@ def main():
                                 '\t\t1. The modsmith.conf file does not exist in the Modsmith install path.\n'
                                 '\t\t2. The working directory was not set to the Modsmith install path.')
 
-    package = Package(args.project, args.data_package, args.redist)
+    packager = Packager(args.project, args.data_package, args.redist)
 
-    if not os.path.exists(package.manifest_path):
+    if not os.path.exists(packager.manifest_path):
         sys.tracebacklimit = 0
         raise FileNotFoundError('Cannot find mod.manifest in project root\n'
                                 '\tAll mods require a manifest. Please create a mod.manifest file in the project root.')
 
     # create pak, if project has game data
-    if os.path.exists(package.data_path):
-        package.generate_pak()
+    if os.path.exists(packager.data_path):
+        packager.generate_pak()
     else:
         print('\n[WARN] Cannot find Data in project root. Skipping PAK generation.')
 
     # create localization paks, if project has localization
-    if os.path.exists(package.i18n_project_path):
-        package.generate_i18n()
+    if os.path.exists(packager.i18n_project_path):
+        packager.generate_i18n()
     else:
         print('\n[WARN] Cannot find Localization in project root. Skipping PAK generation.')
 
     # create redistributable
-    if os.path.exists(package.redist_path):
-        package.pack()
+    if os.path.exists(packager.redist_path):
+        packager.pack()
     else:
         sys.tracebacklimit = 0
         raise NotADirectoryError('Cannot package mod because Build directory was not found\n'

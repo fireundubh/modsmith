@@ -35,7 +35,7 @@ class Utils:
         return {'xml_path': xml_path, 'xml_rows': rows}
 
     @staticmethod
-    def write_output_xml(xml_data, file_path, i18n=False):
+    def write_xml(xml_data, file_path, i18n=False):
         """
         Writes XML data to output XML file
 
@@ -69,7 +69,7 @@ class Utils:
         Retrieves the signature of an XML row based on file name
 
         :param filename: File name to look up as key in dictionary
-        :param keymap: (optional) Dictionary of signatures
+        :param keymap: (optional) Dictionary of XML row signatures
         :return: String or list
         """
         file_name, file_ext = os.path.splitext(filename)
@@ -78,13 +78,14 @@ class Utils:
                 return keymap[key]
 
     @staticmethod
-    def get_pak_by_path(xml_path):
+    def get_pak_by_path(xml_path, *, keymap=DATA_MAP):
         """
         Retrieves the source PAK by file path
 
         :param xml_path: Relative path to XML file (e.g., Data\Libs\Tables\rpg\rpg_param.xml)
+        :param keymap: (optional) Dictionary of folder-to-file mappings
         :return: PAK file name with extension (e.g., Tables.pak)
         """
-        for key in DATA_MAP.keys():
+        for key in keymap.keys():
             if key in xml_path:
-                return DATA_MAP[key]
+                return keymap[key]

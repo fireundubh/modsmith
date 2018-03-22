@@ -11,35 +11,31 @@ from Utils import Utils
 
 
 class Patcher:
-    def __init__(self, package):
+    def __init__(self, packager):
         """
         Sets up the necessary paths for patching XML files
 
-        :param package: Instance of the Package class for the project
+        :param packager: Instance of the Packager class for the project
         """
-        self.config = package.config
-        self.data_path = package.data_path
-        self.data_xml_files = package.data_xml_files
+        self.config = packager.config
+        self.data_path = packager.data_path
 
-        self.redist_data_path = package.redist_data_path
-        self.redist_path = package.redist_path
+        self.redist_data_path = packager.redist_data_path
+        self.redist_path = packager.redist_path
 
-        self.i18n_project_path = package.i18n_project_path
-        self.i18n_redist_path = package.i18n_redist_path
-        self.i18n_xml_files = package.i18n_xml_files
+        self.i18n_project_path = packager.i18n_project_path
+        self.i18n_redist_path = packager.i18n_redist_path
 
-    # TODO: create a system for merging xml files using mod_order.txt
-    def merge_data(self):
-        pass
-
-    def patch_data(self):
+    def patch_data(self, xml_file_list):
         """
         Copies source, replaces existing rows with modified rows, and appends assumed new rows that cannot be found in source.
         Writes out XML to file in the redistributable path.
+
+        :param xml_file_list: List of XML files to be patched
         """
 
         # cull excluded paths from xml file list
-        supported_xml_files = [f for f in self.data_xml_files if not any(x in f for x in EXCLUSIONS)]
+        supported_xml_files = [f for f in xml_file_list if not any(x in f for x in EXCLUSIONS)]
 
         # cull project path from xml file list
         xml_files = Utils.setup_xml_files(self.data_path, supported_xml_files)
@@ -68,8 +64,7 @@ class Patcher:
 
                 # read file in archive
                 with pak_file.open(packed_file, 'r') as pak_xml:
-                    lines = pak_xml.readlines()
-                    output_xml = etree.fromstringlist(lines, etree.XMLParser(remove_blank_text=True))
+                    output_xml = etree.fromstringlist(pak_xml.readlines(), etree.XMLParser(remove_blank_text=True))
 
                     # merge rows
                     for input_row in xml_data['xml_rows']:
@@ -83,34 +78,36 @@ class Patcher:
                                                 '\t\t2. The signature used to find unique rows was too broad.')
                         elif isinstance(signature, list):
                             # create xpath expression for list of keys
-                            xpath = []
-                            for i in range(0, len(signature)):
-                                xpath.append(f'@{signature[i]}="{input_row.get(signature[i])}"')
-                            output_rows = output_xml.xpath('table/rows/row[%s]' % ' and '.join(xpath))
+                            xpaths = [f'@{signature[i]}="{input_row.get(signature[i])}"' for i in range(0, len(signature))]
+                            output_rows = output_xml.xpath('table/rows/row[%s]' % ' and '.join(xpaths))
                         else:
-                            # this should never happen
-                            raise TypeError('Found signature was not str or list. Actual type:', type(signature))
+                            # this should never happen, but continue with error
+                            print('[ERROR] Found signature was not str or list. Actual type:', type(signature))
+                            continue
 
                         # if the row with key exists, remove the row and add the input row
                         # else assume the input row is new and add the row to the output
                         if output_rows is not None and len(output_rows) != 0:
                             output_xml[0][1].remove(output_rows[0])
                             output_xml[0][1].append(input_row)
-                        else:
-                            output_xml[0][1].append(input_row)
+                            continue
+
+                        output_xml[0][1].append(input_row)
 
                     # write output xml
-                    Utils.write_output_xml(output_xml, os.path.join(self.redist_data_path, *xml_file), False)
+                    Utils.write_xml(output_xml, os.path.join(self.redist_data_path, *xml_file), False)
 
     # TODO: support patching localization strings from XLSX and JSON sources
-    def patch_i18n(self):
+    def patch_i18n(self, xml_file_list):
         """
         Constructs XML in memory, seeds with modified rows, and appends unmodified source rows.
         Writes out XML to file in the redistributable path.
+
+        :param xml_file_list: List of XML files to be patched
         """
 
         # cull project path from xml file list
-        xml_files = Utils.setup_xml_files(self.i18n_project_path, self.i18n_xml_files)
+        xml_files = Utils.setup_xml_files(self.i18n_project_path, xml_file_list)
 
         # read game localization files
         for xml_file in xml_files:
@@ -144,12 +141,14 @@ class Patcher:
 
             with zipfile.ZipFile(lang_pak_path, mode='r') as pak_file:
                 with pak_file.open(xml_file[1], mode='r') as pak_xml:
-                    lines = pak_xml.readlines()
-                    xml = etree.fromstringlist(lines, etree.XMLParser(remove_blank_text=True))
+                    xml = etree.fromstringlist(pak_xml.readlines(), etree.XMLParser(remove_blank_text=True))
                     rows = xml.findall('Row')
 
                     for row in rows:
                         key, original_text, translated_text = [r for r in row.findall('Cell')]
+
+                        if key.text in row_keys:
+                            continue
 
                         # we've already added our strings, so merge the unmodified strings
                         if key.text not in row_keys:
@@ -166,4 +165,4 @@ class Patcher:
             output_xml[:] = sorted(tree, key=lambda x: x.xpath('Cell/text()'))
 
             # write output xml
-            Utils.write_output_xml(output_xml, os.path.join(self.i18n_redist_path, *xml_file), True)
+            Utils.write_xml(output_xml, os.path.join(self.i18n_redist_path, *xml_file), True)
