@@ -430,6 +430,8 @@ SIGNATURES = {
     'soul_class': 'soul_class_id',
     'soul_slot2health': 'soul_id',
     'soul_slot2weapon_health': 'soul_id',
+    'sph_group': 'sph_group_id',
+    'sph_highlight': 'achievement_id',
     'statistic': 'statistic_id',
     'statistic_group': 'statistic_group_id',
     'superfaction': 'superfaction_id',
@@ -437,6 +439,7 @@ SIGNATURES = {
     'v_rich_presence_text': ['iso_code', 'string_name'],
     'v_soul2role_metarole': 'soul_id',
     'v_soul_character_data': 'soul_id',
+    'v_sph_texts': ['achievement_id', 'ietf_language_tag'],
 
     # -------------------------------------------------------------------------
     # Data/Libs/Tables/shop
