@@ -4,23 +4,24 @@ import argparse
 import os
 import sys
 
-from Packager import Packager
+from modules.Packager import Packager
 
 
 def main():
     if not os.path.exists('modsmith.conf'):
-        sys.tracebacklimit = 0
-        raise FileNotFoundError('Cannot find modsmith.conf\n'
-                                '\tPossible reasons:\n'
-                                '\t\t1. The modsmith.conf file does not exist in the Modsmith install path.\n'
-                                '\t\t2. The working directory was not set to the Modsmith install path.')
+        if not args.cfg or args.cfg and not os.path.exists(args.cfg):
+            sys.tracebacklimit = 0
+            raise FileNotFoundError('Cannot find modsmith.conf\n\t'
+                                    'Possible reasons:\n\t\t'
+                                    '1. The modsmith.conf file does not exist in the Modsmith install path.\n\t\t'
+                                    '2. The working directory was not set to the Modsmith install path.')
 
-    packager = Packager(args.project, args.data_package, args.redist)
+    packager = Packager(args.project, args.data_package, args.redist, 'modsmith.conf' if not args.cfg else args.cfg)
 
     if not os.path.exists(packager.manifest_path):
         sys.tracebacklimit = 0
-        raise FileNotFoundError('Cannot find mod.manifest in project root\n'
-                                '\tAll mods require a manifest. Please create a mod.manifest file in the project root.')
+        raise FileNotFoundError('Cannot find mod.manifest in project root\n\t'
+                                'All mods require a manifest. Please create a mod.manifest file in the project root.')
 
     # create pak, if project has game data
     if os.path.exists(packager.data_path):
@@ -39,16 +40,17 @@ def main():
         packager.pack()
     else:
         sys.tracebacklimit = 0
-        raise NotADirectoryError('Cannot package mod because Build directory was not found\n'
-                                 '\tPossible reasons:\n'
-                                 '\t\t1. Project has no Data.\n'
-                                 '\t\t2. Project has no Localization.')
+        raise NotADirectoryError('Cannot package mod because Build directory was not found\n\t'
+                                 'Possible reasons:\n\t\t'
+                                 '1. Project has no Data.\n\t\t'
+                                 '2. Project has no Localization.')
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Modsmith by fireundubh')
-    parser.add_argument('-p', '--project', action='store', required=True, default=None, help='Input project path')
+    parser.add_argument('-c', '--cfg', action='store', default='modsmith.conf', help='Path to modsmith.conf')
+    parser.add_argument('-p', '--project', action='store', default=None, help='Input project path')
     parser.add_argument('-d', '--data-package', action='store', default=None, help='Output PAK filename')
-    parser.add_argument('-r', '--redist', action='store', required=True, default=None, help='Redistributable ZIP filename')
+    parser.add_argument('-r', '--redist', action='store', default=None, help='Redistributable ZIP filename')
     args = parser.parse_args()
     main()

@@ -6,8 +6,8 @@ import zipfile
 
 from lxml import etree
 
-from Database import EXCLUSIONS
-from Utils import Utils
+from modules.Database import EXCLUSIONS
+from modules.Utils import Utils
 
 
 class Patcher:
@@ -82,7 +82,7 @@ class Patcher:
                             output_rows = output_xml.xpath('table/rows/row[%s]' % ' and '.join(xpaths))
                         else:
                             # this should never happen, but continue with error
-                            print('[ERROR] Found signature was not str or list. Actual type:', type(signature))
+                            print('\n[ERROR] Found signature was not str or list. Actual type:', type(signature))
                             continue
 
                         # if the row with key exists, remove the row and add the input row

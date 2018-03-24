@@ -5,7 +5,7 @@ import re
 
 from lxml import etree
 
-from Database import DATA_MAP, SIGNATURES
+from modules.Database import DATA_MAP, SIGNATURES
 
 
 class Utils:
