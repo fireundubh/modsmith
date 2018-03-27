@@ -7,6 +7,8 @@ from lxml import etree
 
 from modules.Database import DATA_MAP, SIGNATURES
 
+XML_PARSER = etree.XMLParser(remove_blank_text=True)
+
 
 class Utils:
     @staticmethod
@@ -21,16 +23,17 @@ class Utils:
         return [os.path.split(os.path.relpath(f, path)) for f in files]
 
     @staticmethod
-    def setup_xml_data(path, file):
+    def setup_xml_data(path, relpath, filename):
         """
         Sets up the data used to patch XML files
 
         :param path: Directory in which to find the XML file
-        :param file: XML file with immediate parent directory
+        :param relpath: Relative path to XML file (e.g., Libs\Tables\rpg)
+        :param filename: XML file name (e.g., buff.xml)
         :return: Dictionary of XML paths and rows
         """
-        xml_path = os.path.join(path, *file)
-        xml = etree.parse(xml_path, etree.XMLParser(remove_blank_text=True)).getroot()
+        xml_path = os.path.join(path, relpath, filename)
+        xml = etree.parse(xml_path, XML_PARSER).getroot()
         rows = xml.findall('table/rows/row') or xml.findall('Row')
         return {'xml_path': xml_path, 'xml_rows': rows}
 
@@ -59,9 +62,7 @@ class Utils:
         :param text: String to be stripped of extra whitespace
         :return: String
         """
-        if text:
-            text = re.sub('\s+', ' ', text)
-            return text.strip()
+        return re.sub('\s+', ' ', text).strip() if text else None
 
     @staticmethod
     def get_signature_by_filename(filename, *, keymap=SIGNATURES):
@@ -72,10 +73,7 @@ class Utils:
         :param keymap: (optional) Dictionary of XML row signatures
         :return: String or list
         """
-        file_name, file_ext = os.path.splitext(filename)
-        for key in keymap.keys():
-            if key == file_name:
-                return keymap[key]
+        return keymap[os.path.splitext(filename)[0]]
 
     @staticmethod
     def get_pak_by_path(xml_path, *, keymap=DATA_MAP):

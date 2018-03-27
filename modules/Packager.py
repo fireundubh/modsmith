@@ -64,12 +64,11 @@ class Packager:
         """
         results = []
 
-        for file in files:
-            tbl_file = file.replace('.xml', '.tbl').replace(self.data_path, self.redist_data_path)
+        tbl_files = [f.replace('.xml', '.tbl').replace(self.data_path, self.redist_data_path) for f in files]
 
+        for tbl_file in tbl_files:
             os.makedirs(os.path.dirname(tbl_file), exist_ok=True)
             open(tbl_file, 'w').close()
-
             results.append(tbl_file)
 
         return results
@@ -83,48 +82,49 @@ class Packager:
         :param non_xml_files: List of non-XML files to be packaged
         :return: List of files to be packaged
         """
-        results = []
+        results = set([])
 
         for file in supported_xml_files:
             target_file = os.path.join(self.redist_data_path, os.path.relpath(file, self.data_path))
             arcname = os.path.relpath(file, self.data_path)
-            results.append((target_file, arcname))
+            results.add((target_file, arcname))
 
         for file in unsupported_xml_files:
             arcname = os.path.relpath(file, self.data_path)
-            results.append((file, arcname))
+            results.add((file, arcname))
 
         for file in non_xml_files:
             arcname = os.path.relpath(file, self.redist_data_path) if file.endswith('.tbl') else os.path.relpath(file, self.data_path)
-            results.append((file, arcname))
+            results.add((file, arcname))
 
         return results
 
     def generate_pak(self):
         os.makedirs(self.redist_data_path, exist_ok=True)
 
-        files = [f for f in glob.glob(os.path.join(self.data_path, '**\*'), recursive=True) if os.path.isfile(f)]
+        all_files = [f for f in glob.glob(os.path.join(self.data_path, '**\*'), recursive=True) if os.path.isfile(f) and not f.endswith('.pak')]
 
         # we only care about xml files for patching and tbl generation
-        xml_files = [f for f in files if f.endswith('xml')]
+        xml_files = [f for f in all_files if f.endswith('.xml')]
+
+        # separate support and unsupported files
+        xml_files_supported = [f for f in xml_files if not any(x in f for x in EXCLUSIONS)]
+        xml_files_unsupported = set(xml_files) - set(xml_files_supported)
 
         # generate tbl files and merge them with files to be packaged
-        files += self.generate_tbl_files(xml_files)
+        all_files += self.generate_tbl_files(xml_files)
 
-        Patcher(self).patch_data(xml_files)
+        # separate non-xml files from xml files
+        other_files = set(all_files) - set(xml_files)
+
+        Patcher(self).patch_data(xml_files_supported)
 
         print('\nWriting PAK:\t%s\n%s' % (self.redist_pak_path, '-' * 80))
 
         with zipfile.ZipFile(self.redist_pak_path, 'w', zipfile.ZIP_STORED) as zip_file:
-            supported_xml_files = [f for f in xml_files if not any(x in f for x in EXCLUSIONS)]
-            unsupported_xml_files = set(xml_files) - set(supported_xml_files)
-            non_xml_files = set(files) - set(xml_files)
+            output_files = self.assemble_file_list(xml_files_supported, xml_files_unsupported, other_files)
 
-            # assemble list of files to be packaged
-            output_files = self.assemble_file_list(supported_xml_files, unsupported_xml_files, non_xml_files)
-
-            # write list of files to package
-            for file, arcname in sorted(output_files):
+            for file, arcname in output_files:
                 zip_file.write(file, arcname)
 
                 print('Packaged file:\t%s (as %s)' % (file, arcname))
@@ -161,7 +161,7 @@ class Packager:
                 files = glob.glob(os.path.join(redist_folder_path, '*.xml'), recursive=False)
 
                 for file in sorted(files):
-                    arcname = os.path.relpath(file, os.path.join(self.i18n_redist_path, folder_name))
+                    arcname = os.path.relpath(file, redist_folder_path)
                     zip_file.write(file, arcname)
 
                     print('Packaged file:\t%s (as %s)' % (file, arcname))
@@ -173,12 +173,20 @@ class Packager:
 
         with zipfile.ZipFile(zip_archive, 'w', zipfile.ZIP_DEFLATED) as zip_file:
             zip_file.write(*self.manifest)
+
             print('Packaged file:\t%s (as %s)' % (self.manifest_path, self.manifest_arcname))
 
             files = glob.glob(os.path.join(self.redist_path, self.redist_name, '**\*.pak'), recursive=True)
+            other_files = [f for f in glob.glob(os.path.join(self.project_path, '**\*.pak'), recursive=True) if self.redist_path not in os.path.dirname(f)]
 
             for file in files:
                 arcname = os.path.relpath(file, self.redist_path)
+                zip_file.write(file, arcname)
+
+                print('Packaged file:\t%s (as %s)' % (file, arcname))
+
+            for file in other_files:
+                arcname = os.path.join(self.redist_name, os.path.relpath(file, self.project_path))
                 zip_file.write(file, arcname)
 
                 print('Packaged file:\t%s (as %s)' % (file, arcname))
