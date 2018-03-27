@@ -10,7 +10,7 @@ from modules.Patcher import Patcher
 
 
 class Packager:
-    def __init__(self, project_path, pak_filename, redist_filename, cfg_path):
+    def __init__(self, project_path, i18n_project_path, pak_filename, redist_filename, cfg_path):
         """
         Sets up the necessary paths for building PAKs
 
@@ -18,21 +18,41 @@ class Packager:
         :param pak_filename: File name with extension for the output PAK
         :param redist_filename: File name with extension for the output ZIP
         """
+        if not project_path:
+            raise ValueError('Cannot pass None for project_path')
+
+        if not pak_filename:
+            raise ValueError('Cannot pass None for pak_filename')
+
+        if not redist_filename:
+            raise ValueError('Cannot pass None for redist_filename')
+
         self.project_path = project_path
         self.data_path = os.path.join(self.project_path, 'Data')
         self.data_filename = pak_filename
+
         self.redist_filename = redist_filename
         self.redist_name = os.path.splitext(self.redist_filename)[0]
         self.redist_path = os.path.join(self.project_path, 'Build')
         self.redist_data_path = os.path.join(self.redist_path, self.redist_name, 'Data')
         self.redist_pak_path = os.path.join(self.redist_data_path, self.data_filename)
-        self.i18n_project_path = os.path.join(self.project_path, 'Localization')
+
+        if not i18n_project_path:
+            self.i18n_project_path = os.path.join(self.project_path, 'Localization')
+        else:
+            self.i18n_project_path = i18n_project_path
+
         self.i18n_redist_path = os.path.join(self.redist_path, self.redist_name, 'Localization')
         self.manifest_path = os.path.join(self.project_path, 'mod.manifest')
         self.manifest_arcname = os.path.join(self.redist_name, 'mod.manifest')
         self.manifest = [self.manifest_path, self.manifest_arcname]
+
         self.config = configparser.ConfigParser()
-        self.config.read(cfg_path)
+
+        if not cfg_path:
+            self.config.read('modsmith.conf')
+        else:
+            self.config.read(cfg_path)
 
     # TODO: generate real tbl files
     def generate_tbl_files(self, files):
@@ -83,7 +103,7 @@ class Packager:
     def generate_pak(self):
         os.makedirs(self.redist_data_path, exist_ok=True)
 
-        files = glob.glob(os.path.join(self.data_path, '**\*'), recursive=True)
+        files = [f for f in glob.glob(os.path.join(self.data_path, '**\*'), recursive=True) if os.path.isfile(f)]
 
         # we only care about xml files for patching and tbl generation
         xml_files = [f for f in files if f.endswith('xml')]

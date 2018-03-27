@@ -16,7 +16,7 @@ def main():
                                     '1. The modsmith.conf file does not exist in the Modsmith install path.\n\t\t'
                                     '2. The working directory was not set to the Modsmith install path.')
 
-    packager = Packager(args.project, args.data_package, args.redist, 'modsmith.conf' if not args.cfg else args.cfg)
+    packager = Packager(args.project, args.i18n, args.data_package, args.redist, args.cfg)
 
     if not os.path.exists(packager.manifest_path):
         sys.tracebacklimit = 0
@@ -50,6 +50,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Modsmith by fireundubh')
     parser.add_argument('-c', '--cfg', action='store', default='modsmith.conf', help='Path to modsmith.conf')
     parser.add_argument('-p', '--project', action='store', default=None, help='Input project path')
+    parser.add_argument('-l', '--i18n', action='store', default=None, help='Input localization path')
     parser.add_argument('-d', '--data-package', action='store', default=None, help='Output PAK filename')
     parser.add_argument('-r', '--redist', action='store', default=None, help='Redistributable ZIP filename')
     args = parser.parse_args()
