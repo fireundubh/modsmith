@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<database name="hammerheart">
+	<table name="shop_type2item" version="1">
+		<header>
+			<column name="amount" type="real" />
+			<column name="default_on" type="boolean" />
+			<column name="item_id" type="uuid" />
+			<column name="shop_type_id" type="integer" />
+		</header>
+		<rows>
+			<row amount="10000" default_on="False" item_id="5ef63059-322e-4e1b-abe8-926e100c770e" shop_type_id="41" />
+			<row amount="10000" default_on="False" item_id="5ef63059-322e-4e1b-abe8-926e100c770e" shop_type_id="52" />
+			<row amount="10000" default_on="False" item_id="5ef63059-322e-4e1b-abe8-926e100c770e" shop_type_id="53" />
+			<row amount="10000" default_on="False" item_id="5ef63059-322e-4e1b-abe8-926e100c770e" shop_type_id="60" />
+		</rows>
+	</table>
+</database>

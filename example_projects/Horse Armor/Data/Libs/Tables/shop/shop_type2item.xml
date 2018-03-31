@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<database name="hammerheart">
+	<table name="shop_type2item" version="1">
+		<header>
+			<column name="amount" type="real" />
+			<column name="default_on" type="boolean" />
+			<column name="item_id" type="uuid" />
+			<column name="shop_type_id" type="integer" />
+		</header>
+		<rows>
+			<row amount="1" default_on="True" item_id="40a5de5a-d3a5-c4c3-f5f1-71ab661d55b4" shop_type_id="47" />
+		</rows>
+	</table>
+</database>

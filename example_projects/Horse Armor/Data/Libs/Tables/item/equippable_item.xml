@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<database name="hammerheart">
+	<table name="equippable_item" version="1">
+		<header>
+			<column name="charisma" type="real" />
+			<column name="conspicuousness" type="real" />
+			<column name="item_id" type="uuid" />
+			<column name="rpg_buff_weight" type="real" />
+			<column name="social_class_id" type="integer" />
+			<column name="visibility" type="real" />
+			<column name="wealth_level" type="integer" />
+		</header>
+		<rows>
+			<row charisma="0" conspicuousness="0.2" item_id="40a5de5a-d3a5-c4c3-f5f1-71ab661d55b4" rpg_buff_weight="0.85" social_class_id="1" visibility="0.2" wealth_level="2" />
+		</rows>
+	</table>
+</database>

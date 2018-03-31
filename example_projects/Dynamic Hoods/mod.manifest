@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<kcd_mod>
+  <info>
+    <name>Dynamic Hoods</name>
+    <description>Makes hoods worn by Henry dynamic</description>
+    <author>ctobias</author>
+    <version>1.3</version>
+    <created_on>20 Mar 2018</created_on>
+  </info>
+</kcd_mod>

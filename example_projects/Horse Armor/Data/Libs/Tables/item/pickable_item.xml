@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<database name="hammerheart">
+	<table name="pickable_item" version="1">
+		<header>
+			<column name="entity_script" type="character varying" />
+			<column name="item_id" type="uuid" />
+			<column name="material" type="character varying" />
+			<column name="model" type="character varying" />
+			<column name="owner_fading_coef" type="real" />
+			<column name="price" type="integer" />
+			<column name="visibility_coef" type="real" />
+			<column name="weight" type="real" />
+		</header>
+		<rows>
+			<row entity_script="" item_id="40a5de5a-d3a5-c4c3-f5f1-71ab661d55b4" material="" model="characters/humans/cloth/cloth_folded" owner_fading_coef="0.02" price="3500" visibility_coef="1" weight="20" />
+		</rows>
+	</table>
+</database>

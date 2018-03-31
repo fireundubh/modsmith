@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<database name="hammerheart">
+	<table name="rpg_param" version="1">
+		<header>
+			<column name="rpg_param_key" type="character varying" />
+			<column name="rpg_param_value" type="real" />
+		</header>
+		<rows>
+			<row rpg_param_key="AimStamCost" rpg_param_value="0.0" />
+			<row rpg_param_key="BadassnessDiffToSkillCheckResult" rpg_param_value="0.3" />
+			<row rpg_param_key="BaseInventoryCapacity" rpg_param_value="9999999" />
+			<row rpg_param_key="BasketSuspiciencyNoDealThreashold" rpg_param_value="9999999" />
+			<row rpg_param_key="BowChargeDurationMax" rpg_param_value="1.500000" />
+			<row rpg_param_key="BowChargeDurationMin" rpg_param_value="0.675000" />
+			<!--<row rpg_param_key="DigestionSpeed" rpg_param_value="0.0" />-->
+			<!--<row rpg_param_key="ExhaustionSpeed" rpg_param_value="0.0" />-->
+			<row rpg_param_key="FatalFallHeight" rpg_param_value="9999999" />
+			<row rpg_param_key="HarmlessFallHeight" rpg_param_value="9999999" />
+			<row rpg_param_key="InjuringFallHeight" rpg_param_value="9999999" />
+			<!--<row rpg_param_key="HerbGatherSkillToCount" rpg_param_value="0.0" />-->
+			<!--<row rpg_param_key="HerbGatherSkillToRadius" rpg_param_value="0.0" />-->
+			<!--<row rpg_param_key="HerbGatherXP" rpg_param_value="12.0" />-->
+			<row rpg_param_key="JumpCostBase" rpg_param_value="0" />
+			<row rpg_param_key="MaxStealthHitSoundMultiplier" rpg_param_value="0.9" />
+			<row rpg_param_key="PickpocketingDistance" rpg_param_value="4" />
+			<row rpg_param_key="RepairKitCapacity" rpg_param_value="500.0" />
+			<row rpg_param_key="RepairKitItemHealthBestLimit" rpg_param_value="0.0" />
+			<row rpg_param_key="SprintCost" rpg_param_value="0.0" />
+			<!--<row rpg_param_key="StarvationHealthLossSpeed" rpg_param_value="0.0" />-->
+			<row rpg_param_key="FullClothDirtyingOnFullSpeed" rpg_param_value="12000.0" />
+			<row rpg_param_key="FullClothDirtyingOnZeroSpeed" rpg_param_value="16000.0" />
+		</rows>
+	</table>
+</database>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<kcd_mod>
+  <info>
+    <name>Horse Armor</name>
+    <description>Add a set of mail over leather barding for your horse</description>
+    <author>AJStoner</author>
+    <version>1.2</version>
+    <created_on>18 Mar 2018</created_on>
+  </info>
+</kcd_mod>

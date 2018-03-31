@@ -1,0 +1,10 @@
+<Table>
+	<Row>
+		<Cell>ui_in_barding</Cell>
+		<Cell>Barding is body armour for a horse that could be made from hardened leather, mail, or plate. Full barding consists of a chanfron that protects the face, a criniere that protects the neck, a croupiere that protects the hind quarters, flanchards that protect the flank, a peytral that protects the chest, and a decorative caparison.</Cell>
+	</Row>
+	<Row>
+		<Cell>ui_nm_horse_barding_mail</Cell>
+		<Cell>Mail Barding</Cell>
+	</Row>
+</Table>

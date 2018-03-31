@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<database name="hammerheart">
+	<table name="armor" version="1">
+		<header>
+			<column name="armor_subtype_id" type="integer" />
+			<column name="armor_type_id" type="integer" />
+			<column name="brightness" type="real" />
+			<column name="clothing2_id" type="uuid" />
+			<column name="clothing_id" type="uuid" />
+			<column name="color" type="integer" />
+			<column name="color_hue" type="real" />
+			<column name="color_saturation" type="real" />
+			<column name="computer_name" type="character varying" />
+			<column name="is_underwear" type="boolean" />
+			<column name="item_id" type="uuid" />
+			<column name="max_status" type="integer" />
+			<column name="noise" type="real" />
+			<column name="slash_def" type="real" />
+			<column name="smash_def" type="real" />
+			<column name="stab_def" type="real" />
+			<column name="str_req" type="real" />
+			<column name="superfaction_id" type="integer" />
+			<column name="timestamp" type="character varying" />
+			<column name="zone1_brightness" type="real" />
+			<column name="zone1_hue" type="real" />
+			<column name="zone1_saturation" type="real" />
+			<column name="zone2_brightness" type="real" />
+			<column name="zone2_hue" type="real" />
+			<column name="zone2_saturation" type="real" />
+			<column name="zone3_brightness" type="real" />
+			<column name="zone3_hue" type="real" />
+			<column name="zone3_saturation" type="real" />
+		</header>
+		<rows>
+			<row armor_subtype_id="" armor_type_id="1" brightness="1" clothing2_id="" clothing_id="49cd5054-2d60-c375-f5e8-84166b27abaf" color="8421504" color_hue="0" color_saturation="1" computer_name="" is_underwear="False" item_id="40a5de5a-d3a5-c4c3-f5f1-71ab661d55b4" max_status="500" noise="1.5" slash_def="1.5" smash_def="1.0" stab_def="1.5" str_req="0" superfaction_id="" timestamp="" zone1_brightness="1" zone1_hue="0" zone1_saturation="1" zone2_brightness="1" zone2_hue="0" zone2_saturation="1" zone3_brightness="1" zone3_hue="0" zone3_saturation="1" />
+		</rows>
+	</table>
+</database>

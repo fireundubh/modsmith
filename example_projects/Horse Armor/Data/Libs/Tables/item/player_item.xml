@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<database name="hammerheart">
+	<table name="player_item" version="1">
+		<header>
+			<column name="icon_id" type="integer" />
+			<column name="item_id" type="uuid" />
+			<column name="ui_info" type="character varying" />
+			<column name="ui_name" type="character varying" />
+		</header>
+		<rows>
+			<row icon_id="923" item_id="40a5de5a-d3a5-c4c3-f5f1-71ab661d55b4" ui_info="ui_in_barding" ui_name="ui_nm_horse_barding_mail" />
+		</rows>
+	</table>
+</database>

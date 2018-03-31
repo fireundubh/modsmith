@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<database name="hammerheart">
+	<table name="clothing_preset" version="1">
+		<header>
+			<column name="clothing_preset_id" type="uuid" />
+			<column name="clothing_preset_name" type="character varying" />
+			<column name="computer_name" type="character varying" />
+			<column name="gender_id" type="integer" />
+			<column name="prefers_hood_on" type="boolean" />
+			<column name="social_class_id" type="integer" />
+			<column name="timestamp" type="character varying" />
+			<column name="wealth_level" type="integer" />
+		</header>
+		<rows>
+			<row clothing_preset_id="40f91af6-8aa6-fa06-c171-785c048b0893" clothing_preset_name="Henry_default" computer_name="MHOZ-DT" gender_id="0" prefers_hood_on="True" social_class_id="43" timestamp="19/11/2017 10:16" wealth_level="0" />
+			<row clothing_preset_id="411006c6-0e71-e21b-0d45-70ecd7dea5b8" clothing_preset_name="Henry_Stephanie_shirt" computer_name="MPODPROCKY-DT" gender_id="0" prefers_hood_on="True" social_class_id="43" timestamp="06/09/2017 13:44" wealth_level="0" />
+			<row clothing_preset_id="41f0e43d-79e9-696e-ab9d-2f710c05e791" clothing_preset_name="Henry_expensive" computer_name="MPODPROCKY-DT" gender_id="0" prefers_hood_on="True" social_class_id="0" timestamp="07/09/2017 13:40" wealth_level="0" />
+			<row clothing_preset_id="42cb4eee-3a21-b121-88df-9cda31ac4a9c" clothing_preset_name="Henry_default_05" computer_name="MPODPROCKY-DT" gender_id="0" prefers_hood_on="True" social_class_id="43" timestamp="01/06/2017 23:01" wealth_level="0" />
+			<row clothing_preset_id="43ed8cb9-82db-a7c6-267d-d9c9d2519a82" clothing_preset_name="_Henry_PribyslavitzArmor" computer_name="MLABUT-DT" gender_id="0" prefers_hood_on="True" social_class_id="0" timestamp="29/11/2017 10:20" wealth_level="" />
+			<row clothing_preset_id="442730d3-f35d-667c-9ed0-28f15499eda0" clothing_preset_name="Henry_cuman" computer_name="MPODPROCKY-DT" gender_id="0" prefers_hood_on="True" social_class_id="43" timestamp="12/04/2017 13:16" wealth_level="0" />
+			<row clothing_preset_id="44696f75-6b18-1fc9-74d4-1d7ee7d28680" clothing_preset_name="Henry_Armor03" computer_name="MPODPROCKY-DT" gender_id="0" prefers_hood_on="True" social_class_id="33" timestamp="30/05/2017 13:54" wealth_level="0" />
+			<row clothing_preset_id="447e01e0-7f9d-97da-a905-e1c3a4bd4e8e" clothing_preset_name="henry_smithbattle" computer_name="OBITTNER-DT" gender_id="0" prefers_hood_on="True" social_class_id="1" timestamp="25/05/2017 18:09" wealth_level="0" />
+			<row clothing_preset_id="450247d8-412e-e333-0d30-2c44a9a8bd87" clothing_preset_name="Henry_default_02" computer_name="MPODPROCKY-DT" gender_id="0" prefers_hood_on="True" social_class_id="43" timestamp="02/06/2017 14:19" wealth_level="0" />
+			<row clothing_preset_id="463e328e-09d6-8031-e612-f07d5c7c48a2" clothing_preset_name="Henry_default_06" computer_name="MPODPROCKY-DT" gender_id="0" prefers_hood_on="True" social_class_id="43" timestamp="02/06/2017 14:20" wealth_level="0" />
+			<row clothing_preset_id="464745d9-5e70-c08b-b9db-29f768528fb6" clothing_preset_name="haste_earlygame_henry" computer_name="OBITTNER-D" gender_id="0" prefers_hood_on="True" social_class_id="" timestamp="10/11/2017 16:06" wealth_level="" />
+			<row clothing_preset_id="46871a3d-652b-b7dd-f7b4-5f311a81a3a3" clothing_preset_name="Henry_Armor01" computer_name="JBARTONEK-DT" gender_id="0" prefers_hood_on="True" social_class_id="33" timestamp="05/06/2017 12:28" wealth_level="0" />
+			<row clothing_preset_id="47941c58-e0d6-a137-124a-ab4f82ff0983" clothing_preset_name="haste_hardcore_henry" computer_name="OBITTNER-D" gender_id="0" prefers_hood_on="True" social_class_id="" timestamp="10/11/2017 16:12" wealth_level="" />
+			<row clothing_preset_id="48639501-c130-43ee-d15f-b9178fa3b2ba" clothing_preset_name="_kickstarter_Henry" computer_name="JIRIBARTONEK-DT" gender_id="0" prefers_hood_on="True" social_class_id="1" timestamp="07/10/2013 18:52" wealth_level="0" />
+			<row clothing_preset_id="48c6486b-1729-0598-d550-869ae65276a9" clothing_preset_name="Henry_default_bandage" computer_name="JBARTONEK-DT" gender_id="0" prefers_hood_on="True" social_class_id="43" timestamp="09/11/2017 15:57" wealth_level="0" />
+			<row clothing_preset_id="4ab4ea8a-9f6b-9872-162c-ccbeb5245087" clothing_preset_name="Henry_default_03" computer_name="MPODPROCKY-DT" gender_id="0" prefers_hood_on="True" social_class_id="43" timestamp="01/06/2017 22:20" wealth_level="0" />
+			<row clothing_preset_id="4af7e715-4ca8-be2d-68e4-b5aa407a86bc" clothing_preset_name="Henry_default_04" computer_name="MPODPROCKY-DT" gender_id="0" prefers_hood_on="True" social_class_id="43" timestamp="01/06/2017 21:40" wealth_level="0" />
+			<row clothing_preset_id="4b9b989a-0826-b722-1a95-8da6cb4e5db1" clothing_preset_name="Henry_Armor02" computer_name="MPODPROCKY-DT" gender_id="0" prefers_hood_on="True" social_class_id="33" timestamp="01/06/2017 22:49" wealth_level="0" />
+			<row clothing_preset_id="4be73479-8dc8-9ed0-8c24-0faf3714ff96" clothing_preset_name="_Henry_Armour" computer_name="MPODPROCKY-DT" gender_id="0" prefers_hood_on="True" social_class_id="33" timestamp="10/11/2017 14:50" wealth_level="0" />
+			<row clothing_preset_id="4c1c38b0-189e-1dcd-e63f-8f1c16a7b0bf" clothing_preset_name="_Henry_WIP" computer_name="MPODPROCKY-DT" gender_id="0" prefers_hood_on="True" social_class_id="13" timestamp="12/04/2017 13:19" wealth_level="0" />
+			<row clothing_preset_id="4c238c1c-60a5-9ee1-dfe1-68ea9e529386" clothing_preset_name="_e3_2017_combat_henry" computer_name="VBOCAN-DT" gender_id="0" prefers_hood_on="True" social_class_id="1" timestamp="04/07/2017 13:01" wealth_level="0" />
+			<row clothing_preset_id="4c65994e-0259-259c-6c03-fd29c97ffca6" clothing_preset_name="haste_lategame_henry" computer_name="OBITTNER-D" gender_id="0" prefers_hood_on="True" social_class_id="" timestamp="10/11/2017 16:10" wealth_level="" />
+			<row clothing_preset_id="4c65c39c-1cd7-e540-4fac-bb7b71a0558c" clothing_preset_name="Henry_default_bandage_on_leg" computer_name="MPODPROCKY-DT" gender_id="0" prefers_hood_on="True" social_class_id="43" timestamp="16/11/2017 16:42" wealth_level="" />
+			<row clothing_preset_id="4cc5a02d-cca4-09b7-e064-aeff9d072b9d" clothing_preset_name="_Henry_Stealth" computer_name="MLABUT-DT" gender_id="0" prefers_hood_on="True" social_class_id="0" timestamp="29/11/2017 10:22" wealth_level="" />
+			<row clothing_preset_id="4d154a9a-73cf-4a4a-9617-204ab1371e84" clothing_preset_name="_kickstarter_henry_003" computer_name="JIRIBARTONEK-DT" gender_id="0" prefers_hood_on="True" social_class_id="33" timestamp="23/01/2014 13:25" wealth_level="0" />
+			<row clothing_preset_id="4d4a85c2-98dc-981d-25ca-9b2a0c8ab3ba" clothing_preset_name="Henry_torture" computer_name="JSMEJKAL-DT" gender_id="0" prefers_hood_on="True" social_class_id="13" timestamp="17/10/2016 12:35" wealth_level="0" />
+			<row clothing_preset_id="4feb4fdc-edc5-85e5-bca1-cb63715ac886" clothing_preset_name="haste_midgame_henry" computer_name="OBITTNER-D" gender_id="0" prefers_hood_on="True" social_class_id="" timestamp="10/11/2017 16:06" wealth_level="" />
+		</rows>
+	</table>
+</database>
