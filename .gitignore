@@ -1,3 +1,5 @@
-bin/
 .idea/
+bin/
+Build/
+test_data/
 *.pyc
