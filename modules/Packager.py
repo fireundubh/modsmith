@@ -1,61 +1,27 @@
 # coding=utf-8
 
-import configparser
 import glob
 import os
+import operator
+import time
+import types
 import zipfile
 
+from functools import reduce
+
 from modules.Database import EXCLUSIONS
+from modules.Package import Package
 from modules.Patcher import Patcher
 
 
-class Packager:
-    def __init__(self, project_path, i18n_project_path, pak_filename, redist_filename, cfg_path):
-        """
-        Sets up the necessary paths for building PAKs
+class Packager(Package):
+    def __init__(self, project_path, project_i18n_path, output_pak_file_name, redist_file_name, cfg_path):
+        self.settings = [project_path, project_i18n_path, output_pak_file_name, redist_file_name, cfg_path]
+        self.sep = '-' * 80
+        super(Packager, self).__init__(*self.settings)
 
-        :param project_path: Path to the Modsmith project root
-        :param pak_filename: File name with extension for the output PAK
-        :param redist_filename: File name with extension for the output ZIP
-        """
-        if not project_path:
-            raise ValueError('Cannot pass None for project_path')
-
-        if not pak_filename:
-            raise ValueError('Cannot pass None for pak_filename')
-
-        if not redist_filename:
-            raise ValueError('Cannot pass None for redist_filename')
-
-        self.project_path = project_path
-        self.data_path = os.path.join(self.project_path, 'Data')
-        self.data_filename = pak_filename
-
-        self.redist_filename = redist_filename
-        self.redist_name = os.path.splitext(self.redist_filename)[0]
-        self.redist_path = os.path.join(self.project_path, 'Build')
-        self.redist_data_path = os.path.join(self.redist_path, self.redist_name, 'Data')
-        self.redist_pak_path = os.path.join(self.redist_data_path, self.data_filename)
-
-        if not i18n_project_path:
-            self.i18n_project_path = os.path.join(self.project_path, 'Localization')
-        else:
-            self.i18n_project_path = i18n_project_path
-
-        self.i18n_redist_path = os.path.join(self.redist_path, self.redist_name, 'Localization')
-        self.manifest_path = os.path.join(self.project_path, 'mod.manifest')
-        self.manifest_arcname = os.path.join(self.redist_name, 'mod.manifest')
-        self.manifest = [self.manifest_path, self.manifest_arcname]
-
-        self.config = configparser.ConfigParser()
-
-        if not cfg_path:
-            self.config.read('modsmith.conf')
-        else:
-            self.config.read(cfg_path)
-
-    # TODO: generate real tbl files
-    def generate_tbl_files(self, files):
+    # PRIVATE METHODS
+    def _generate_tbl_files(self, files: list) -> list:
         """
         Generate empty files with the .tbl extension
 
@@ -64,7 +30,7 @@ class Packager:
         """
         results = []
 
-        tbl_files = [f.replace('.xml', '.tbl').replace(self.data_path, self.redist_data_path) for f in files]
+        tbl_files = [f.replace('.xml', '.tbl').replace(self.project_data_path, self.redist_data_path) for f in files if 'Data\Libs\Tables' in f]
 
         for tbl_file in tbl_files:
             os.makedirs(os.path.dirname(tbl_file), exist_ok=True)
@@ -73,120 +39,90 @@ class Packager:
 
         return results
 
-    def assemble_file_list(self, supported_xml_files, unsupported_xml_files, non_xml_files):
+    def _prepare_i18n_targets(self, folders: list) -> types.GeneratorType:
         """
-        Assembles multiple lists into a single list of files to be packaged
-
-        :param supported_xml_files: List of patchable XML files to be packaged
-        :param unsupported_xml_files: List of unpatchable XML files to be packaged
-        :param non_xml_files: List of non-XML files to be packaged
-        :return: List of files to be packaged
+        Generates a list of lists of i18n XML files, and creates output directories if needed
+        :param folders: List of folders containing i18n data
+        :return: List of lists  - use reduce(operator.concat, list) to concatenate
         """
-        results = set([])
+        for folder in folders:
+            os.makedirs(os.path.join(self.redist_i18n_path, folder), exist_ok=True)
+            yield glob.glob(os.path.join(self.project_i18n_path, folder, '*.xml'), recursive=False)
 
-        for file in supported_xml_files:
-            target_file = os.path.join(self.redist_data_path, os.path.relpath(file, self.data_path))
-            arcname = os.path.relpath(file, self.data_path)
-            results.add((target_file, arcname))
-
-        for file in unsupported_xml_files:
-            arcname = os.path.relpath(file, self.data_path)
-            results.add((file, arcname))
-
-        for file in non_xml_files:
-            arcname = os.path.relpath(file, self.redist_data_path) if file.endswith('.tbl') else os.path.relpath(file, self.data_path)
-            results.add((file, arcname))
-
-        return results
-
+    # PUBLIC METHODS
     def generate_pak(self):
         os.makedirs(self.redist_data_path, exist_ok=True)
 
-        all_files = [f for f in glob.glob(os.path.join(self.data_path, '**\*'), recursive=True) if os.path.isfile(f) and not f.endswith('.pak')]
+        all_files = [f for f in glob.glob(os.path.join(self.project_data_path, '**\*'), recursive=True) if os.path.isfile(f) and not f.endswith('.pak')]
 
         # we only care about xml files for patching and tbl generation
         xml_files = [f for f in all_files if f.endswith('.xml')]
 
         # separate support and unsupported files
-        xml_files_supported = [f for f in xml_files if not any(x in f for x in EXCLUSIONS)]
+        xml_files_supported = set([f for f in xml_files if not any(x in f for x in EXCLUSIONS)])
         xml_files_unsupported = set(xml_files) - set(xml_files_supported)
 
         # generate tbl files and merge them with files to be packaged
-        all_files += self.generate_tbl_files(xml_files)
+        all_files += self._generate_tbl_files(xml_files)
 
         # separate non-xml files from xml files
         other_files = set(all_files) - set(xml_files)
 
-        Patcher(self).patch_data(xml_files_supported)
+        patcher = Patcher(*self.settings)
+        patcher.patch_data(xml_files_supported)
 
-        print('\nWriting PAK:\t%s\n%s' % (self.redist_pak_path, '-' * 80))
+        print(f'\nWriting PAK:\t{self.redist_pak_path}\n{self.sep}')
 
         with zipfile.ZipFile(self.redist_pak_path, 'w', zipfile.ZIP_STORED) as zip_file:
             output_files = self.assemble_file_list(xml_files_supported, xml_files_unsupported, other_files)
 
-            for file, arcname in output_files:
-                zip_file.write(file, arcname)
+            for file, arc_name in output_files:
+                zip_file.write(file, arc_name)
 
-                print('Packaged file:\t%s (as %s)' % (file, arcname))
-
-    def generate_i18n_file_list(self, folders):
-        """
-        Creates a list of i18n files
-
-        :param folders: List of folder names
-        :return: List of i18n files
-        """
-        results = []
-
-        for folder in folders:
-            os.makedirs(os.path.join(self.i18n_redist_path, folder), exist_ok=True)
-            results += glob.glob(os.path.join(self.i18n_project_path, folder, '*.xml'), recursive=False)
-
-        return results
+                print(f'Packaged file:\t{file} (as {arc_name})')
 
     def generate_i18n(self):
-        folder_names = os.listdir(self.i18n_project_path)
+        folder_names = os.listdir(self.project_i18n_path)
 
-        xml_files = self.generate_i18n_file_list(folder_names)
+        xml_files = self._prepare_i18n_targets(folder_names)
+        reduce(operator.concat, xml_files)
 
-        Patcher(self).patch_i18n(xml_files)
+        patcher = Patcher(*self.settings)
+        patcher.patch_i18n(xml_files)
 
         for folder_name in folder_names:
-            redist_folder_path = os.path.join(self.i18n_redist_path, folder_name)
-            pak_filename = redist_folder_path + '.pak'
+            redist_folder_path = os.path.join(self.redist_i18n_path, folder_name)
+            pak_file_name = redist_folder_path + self.output_pak_extension
 
-            print('\nWriting PAK:\t%s\n%s' % (pak_filename, '-' * 80))
+            print(f'\nWriting PAK:\t{pak_file_name}\n{self.sep}')
 
-            with zipfile.ZipFile(pak_filename, 'w', compression=zipfile.ZIP_STORED) as zip_file:
-                files = glob.glob(os.path.join(redist_folder_path, '*.xml'), recursive=False)
+            with zipfile.ZipFile(pak_file_name, mode='w', compression=zipfile.ZIP_STORED) as zip_file:
+                for file in glob.glob(os.path.join(redist_folder_path, '*.xml'), recursive=False):
+                    arc_name = os.path.relpath(file, redist_folder_path)
+                    zip_file.write(file, arc_name)
 
-                for file in sorted(files):
-                    arcname = os.path.relpath(file, redist_folder_path)
-                    zip_file.write(file, arcname)
-
-                    print('Packaged file:\t%s (as %s)' % (file, arcname))
+                    print(f'Packaged file:\t{file} (as {arc_name})')
 
     def pack(self):
-        zip_archive = os.path.join(self.redist_path, self.redist_filename)
+        zip_archive = os.path.join(self.redist_path, self.redist_file_name)
 
-        print('\nWriting ZIP:\t%s\n%s' % (zip_archive, '-' * 80))
+        print(f'\nWriting ZIP:\t{zip_archive}\n{self.sep}')
 
-        with zipfile.ZipFile(zip_archive, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+        with zipfile.ZipFile(zip_archive, mode='w', compression=zipfile.ZIP_DEFLATED) as zip_file:
             zip_file.write(*self.manifest)
 
-            print('Packaged file:\t%s (as %s)' % (self.manifest_path, self.manifest_arcname))
+            print(f'Packaged file:\t{self.manifest_path} (as {self.manifest_arc_name})')
 
             files = glob.glob(os.path.join(self.redist_path, self.redist_name, '**\*.pak'), recursive=True)
-            other_files = [f for f in glob.glob(os.path.join(self.project_path, '**\*.pak'), recursive=True) if self.redist_path not in os.path.dirname(f)]
+            other_files = [f for f in glob.glob(os.path.join(self.project_path, '**\*.pak'), recursive=True) if
+                           self.redist_path not in os.path.dirname(f)]
 
-            for file in files:
-                arcname = os.path.relpath(file, self.redist_path)
-                zip_file.write(file, arcname)
+            for file in files + other_files:
+                if file in other_files:
+                    arc_name = os.path.join(self.redist_name, os.path.relpath(file, self.project_path))
+                else:
+                    arc_name = os.path.relpath(file, self.redist_path)
 
-                print('Packaged file:\t%s (as %s)' % (file, arcname))
+                zip_file.write(file, arc_name)
 
-            for file in other_files:
-                arcname = os.path.join(self.redist_name, os.path.relpath(file, self.project_path))
-                zip_file.write(file, arcname)
-
-                print('Packaged file:\t%s (as %s)' % (file, arcname))
+                print(f'Packaged file:\t{file} (as {arc_name})')

@@ -16,6 +16,15 @@ def main():
                                     '1. The modsmith.conf file does not exist in the Modsmith install path.\n\t\t'
                                     '2. The working directory was not set to the Modsmith install path.')
 
+    if not args.project:
+        raise ValueError('Cannot pass None for project_path')
+
+    if not args.data_package:
+        raise ValueError('Cannot pass None for pak_filename')
+
+    if not args.redist:
+        raise ValueError('Cannot pass None for redist_filename')
+
     packager = Packager(args.project, args.i18n, args.data_package, args.redist, args.cfg)
 
     if not os.path.exists(packager.manifest_path):
@@ -24,13 +33,13 @@ def main():
                                 'All mods require a manifest. Please create a mod.manifest file in the project root.')
 
     # create pak, if project has game data
-    if os.path.exists(packager.data_path):
+    if os.path.exists(packager.project_data_path):
         packager.generate_pak()
     else:
         print('\n[WARN] Cannot find Data in project root. Skipping PAK generation.')
 
     # create localization paks, if project has localization
-    if os.path.exists(packager.i18n_project_path):
+    if os.path.exists(packager.project_i18n_path):
         packager.generate_i18n()
     else:
         print('\n[WARN] Cannot find Localization in project root. Skipping PAK generation.')
