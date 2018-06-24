@@ -1,5 +1,3 @@
-# coding=utf-8
-
 import configparser
 import os
 import types
@@ -22,7 +20,7 @@ class Package:
         self.redist_name, self.redist_extension = os.path.splitext(redist_file_name)
         self.redist_path = os.path.join(self.project_path, 'Build')
         self.redist_data_path = os.path.join(self.redist_path, self.redist_name, 'Data')
-        self.redist_pak_path = os.path.join(self.redist_data_path, self.output_pak_name)
+        self.redist_pak_path = os.path.join(self.redist_data_path, output_pak_file_name)
 
         if not project_i18n_path:
             self.project_i18n_path = os.path.join(self.project_path, 'Localization')
