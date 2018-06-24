@@ -1,12 +1,10 @@
-# coding=utf-8
-
 import os
 import re
 import types
 
 from lxml import etree
 
-from modules.Database import DATA_MAP, SIGNATURES
+from modules.Database import DATA_MAP
 
 XML_PARSER = etree.XMLParser(remove_blank_text=True)
 

@@ -1,5 +1,3 @@
-# coding=utf-8
-
 # These mappings allow Modsmith to find PAKs based on file path.
 DATA_MAP = {
     'Data\Scripts': 'Scripts.pak',

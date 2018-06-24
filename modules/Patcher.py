@@ -1,5 +1,3 @@
-# coding=utf-8
-
 import copy
 import os
 import types
@@ -26,8 +24,6 @@ class Patcher(Package):
 
     @staticmethod
     def _merge_rows(rows: etree.ElementTree, signatures: tuple, output_xml: etree.ElementTree) -> None:
-        assert isinstance(signatures, list)
-
         for source_row in rows:
             xpaths = [f'@{signature}="{source_row.get(signature)}"' for signature in signatures]
             output_rows = output_xml.xpath(f'table/rows/row[{" and ".join(xpaths)}]')
@@ -117,7 +113,6 @@ class Patcher(Package):
 
             # create row data for comparing keys
             signatures = tuple(set(self._get_string_keys(output_xml)))
-            assert signatures is not None
 
             self._merge_string_rows(output_rows, signatures, output_xml)
 
