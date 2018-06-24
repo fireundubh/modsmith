@@ -1,10 +1,6 @@
-# coding=utf-8
-
 import glob
 import os
 import operator
-import time
-import types
 import zipfile
 
 from functools import reduce
@@ -39,15 +35,21 @@ class Packager(Package):
 
         return results
 
-    def _prepare_i18n_targets(self, folders: list) -> types.GeneratorType:
+    def _prepare_i18n_targets(self, folders: list) -> list:
         """
-        Generates a list of lists of i18n XML files, and creates output directories if needed
+        Generates a list i18n XML files, and creates output directories if needed
         :param folders: List of folders containing i18n data
-        :return: List of lists  - use reduce(operator.concat, list) to concatenate
+        :return: list of files with full paths
         """
+        xml_files = list()
+
         for folder in folders:
-            os.makedirs(os.path.join(self.redist_i18n_path, folder), exist_ok=True)
-            yield glob.glob(os.path.join(self.project_i18n_path, folder, '*.xml'), recursive=False)
+            files = glob.glob(os.path.join(self.project_i18n_path, folder, '*.xml'), recursive=False)
+            if files is not None and len(files) > 0:
+                os.makedirs(os.path.join(self.redist_i18n_path, folder), exist_ok=True)
+                xml_files.extend(files)
+
+        return xml_files
 
     # PUBLIC METHODS
     def generate_pak(self):
