@@ -1,13 +1,14 @@
 import copy
 import os
 import types
-import zipfile
 
 from lxml import etree
 
-from modules.Database import SIGNATURES
+from modules.Database import Database
 from modules.Package import Package
+from modules.SimpleLogger import SimpleLogger as Log
 from modules.Utils import Utils
+from stdlib.zipfilePatch import ZipFileFixed
 
 XML_PARSER = etree.XMLParser(remove_blank_text=True)
 
@@ -57,13 +58,16 @@ class Patcher(Package):
         """
         for parent_path, xml_file_name, relative_xml_path in Utils.setup_xml_files(self.project_data_path, xml_file_list):
             project_xml_path = os.path.join(self.project_data_path, relative_xml_path)
+
+            Log.info('Patching XML file:\t%s (source: %s)' % (relative_xml_path, project_xml_path))
+
             pak_file_name = Utils.get_pak_by_path(project_xml_path, project_path=self.project_path)
             zipped_pak_path = os.path.join(self.config['Game']['Path'], 'Data', pak_file_name)
 
             arc_name = relative_xml_path.replace(os.path.sep, os.path.altsep)
 
             # read zipped pak xml
-            with zipfile.ZipFile(zipped_pak_path, mode='r') as data:
+            with ZipFileFixed(zipped_pak_path, mode='r') as data:
                 with data.open(arc_name, 'r') as xml:
                     lines = xml.readlines()
 
@@ -71,7 +75,8 @@ class Patcher(Package):
 
             # merge rows based on signature lookup
             rows = etree.parse(project_xml_path, XML_PARSER).getroot().findall('table/rows/row')
-            self._merge_rows(rows, SIGNATURES[xml_file_name[:-4]], output_xml)
+            signatures = Database.get_signatures()
+            self._merge_rows(rows, signatures[xml_file_name[:-4]], output_xml)
 
             redist_xml_path = os.path.join(self.redist_data_path, parent_path, xml_file_name)
             etree.ElementTree(output_xml).write(redist_xml_path, encoding='us-ascii', pretty_print=True, xml_declaration=True)
@@ -84,8 +89,14 @@ class Patcher(Package):
 
         :param xml_file_list: List of XML files to be patched
         """
-        for parent_path, file_name, relative_path in Utils.setup_xml_files(self.project_i18n_path, xml_file_list):
-            project_xml_path = os.path.join(self.project_i18n_path, relative_path)
+        # filter out unsupported xml files - we can arbitrarily add these later but we can't patch them
+        supported_xml_files = Database.get_localization()
+        xml_file_list = [x for x in xml_file_list if os.path.basename(x) in supported_xml_files]
+
+        for parent_path, file_name, relative_xml_path in Utils.setup_xml_files(self.project_i18n_path, xml_file_list):
+            project_xml_path = os.path.join(self.project_i18n_path, relative_xml_path)
+
+            Log.info('Patching XML file:\t%s (source: %s)' % (relative_xml_path, project_xml_path))
 
             source_rows = etree.parse(project_xml_path, XML_PARSER).getroot().findall('Row')
 
@@ -105,7 +116,7 @@ class Patcher(Package):
             # read zipped pak xml
             zip_path = os.path.join(self.config['Game']['Path'], 'Localization', parent_path + '.pak')
 
-            with zipfile.ZipFile(zip_path, mode='r') as data:
+            with ZipFileFixed(zip_path, mode='r') as data:
                 with data.open(file_name, mode='r') as xml:
                     lines = xml.readlines()
 
@@ -120,7 +131,7 @@ class Patcher(Package):
             tree = output_xml.findall('Row')
             output_xml[:] = sorted(tree, key=lambda r: r.xpath('Cell/text()'))
 
-            redist_xml_path = os.path.join(self.redist_i18n_path, relative_path)
+            redist_xml_path = os.path.join(self.redist_i18n_path, relative_xml_path)
 
             with open(redist_xml_path, mode='w', encoding='utf8') as output_file:
                 output_file.write(etree.tostring(output_xml, pretty_print=True).decode('unicode-escape'))

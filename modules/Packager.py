@@ -1,17 +1,21 @@
 import glob
-import os
 import operator
-import zipfile
-
+import os
 from functools import reduce
+from shutil import copy2
+from zipfile import ZIP_DEFLATED, ZIP_STORED
 
-from modules.Database import EXCLUSIONS
+from modules.Database import Database
 from modules.Package import Package
 from modules.Patcher import Patcher
+from modules.SimpleLogger import SimpleLogger as Log
+
+from stdlib.zipfilePatch import ZipFileFixed
 
 
 class Packager(Package):
-    def __init__(self, project_path, project_i18n_path, output_pak_file_name, redist_file_name, cfg_path):
+    def __init__(self, project_path, project_i18n_path, output_pak_file_name, redist_file_name, cfg_path, allow_arbitrary_files):
+        self.allow_arbitrary_files = allow_arbitrary_files
         self.settings = [project_path, project_i18n_path, output_pak_file_name, redist_file_name, cfg_path]
         self.sep = '-' * 80
         super(Packager, self).__init__(*self.settings)
@@ -61,7 +65,7 @@ class Packager(Package):
         xml_files = [f for f in all_files if f.endswith('.xml')]
 
         # separate support and unsupported files
-        xml_files_supported = set([f for f in xml_files if not any(x in f for x in EXCLUSIONS)])
+        xml_files_supported = set([f for f in xml_files if not any(x in f for x in Database.get_exclusions())])
         xml_files_unsupported = set(xml_files) - set(xml_files_supported)
 
         # generate tbl files and merge them with files to be packaged
@@ -70,25 +74,33 @@ class Packager(Package):
         # separate non-xml files from xml files
         other_files = set(all_files) - set(xml_files)
 
+        Log.info('Patching supported game data...%s%s' % (os.linesep, self.sep), os.linesep)
         patcher = Patcher(*self.settings)
         patcher.patch_data(xml_files_supported)
 
-        print(f'\nWriting PAK:\t{self.redist_pak_path}\n{self.sep}')
+        Log.info('Writing PAK:\t%s%s%s' % (self.redist_pak_path, os.linesep, self.sep), os.linesep)
 
-        with zipfile.ZipFile(self.redist_pak_path, 'w', zipfile.ZIP_STORED) as zip_file:
+        with ZipFileFixed(self.redist_pak_path, 'w', ZIP_STORED) as zip_file:
             output_files = self.assemble_file_list(xml_files_supported, xml_files_unsupported, other_files)
 
             for file, arc_name in output_files:
                 zip_file.write(file, arc_name)
 
-                print(f'Packaged file:\t{file} (as {arc_name})')
+                Log.info('File added to PAK:\t%s (as %s)' % (file, arc_name))
 
     def generate_i18n(self):
         folder_names = os.listdir(self.project_i18n_path)
 
         xml_files = self._prepare_i18n_targets(folder_names)
-        reduce(operator.concat, xml_files)
+        try:
+            reduce(operator.concat, xml_files)
+        except TypeError:
+            Log.error('Failed to prepare i18n targets.')
+            if len(folder_names) > 0:
+                Log.info('Is your folder structure correct? (e.g., Localization\english_xml\*.xml)', '\t', os.linesep)
+            raise
 
+        Log.info('Patching supported localization...%s%s' % (os.linesep, self.sep), os.linesep)
         patcher = Patcher(*self.settings)
         patcher.patch_i18n(xml_files)
 
@@ -96,24 +108,37 @@ class Packager(Package):
             redist_folder_path = os.path.join(self.redist_i18n_path, folder_name)
             pak_file_name = redist_folder_path + self.output_pak_extension
 
-            print(f'\nWriting PAK:\t{pak_file_name}\n{self.sep}')
+            Log.info('Writing PAK:\t%s%s%s' % (pak_file_name, os.linesep, self.sep), os.linesep)
 
-            with zipfile.ZipFile(pak_file_name, mode='w', compression=zipfile.ZIP_STORED) as zip_file:
-                for file in glob.glob(os.path.join(redist_folder_path, '*.xml'), recursive=False):
-                    arc_name = os.path.relpath(file, redist_folder_path)
-                    zip_file.write(file, arc_name)
+            with ZipFileFixed(pak_file_name, mode='w', compression=ZIP_STORED) as zip_file:
+                if self.allow_arbitrary_files:
+                    for f in xml_files:
+                        _, file_name = os.path.split(f)
 
-                    print(f'Packaged file:\t{file} (as {arc_name})')
+                        supported_xml_files = Database.get_localization()
+
+                        if file_name not in supported_xml_files:
+                            output_path = os.path.join(redist_folder_path, file_name)
+                            os.makedirs(os.path.dirname(output_path), exist_ok=True)
+                            copy2(f, output_path)
+
+                            Log.info('File copied for PAK:\t%s (as %s)' % (f, output_path))
+
+                for f in glob.glob(os.path.join(redist_folder_path, '*.xml'), recursive=False):
+                    arc_name = os.path.relpath(f, redist_folder_path)
+                    zip_file.write(f, arc_name)
+
+                    Log.info('File added to PAK:\t%s (as %s)' % (f, arc_name))
 
     def pack(self):
         zip_archive = os.path.join(self.redist_path, self.redist_file_name)
 
-        print(f'\nWriting ZIP:\t{zip_archive}\n{self.sep}')
+        Log.info('Writing ZIP:\t%s%s%s' % (zip_archive, os.linesep, self.sep), os.linesep)
 
-        with zipfile.ZipFile(zip_archive, mode='w', compression=zipfile.ZIP_DEFLATED) as zip_file:
+        with ZipFileFixed(zip_archive, mode='w', compression=ZIP_DEFLATED) as zip_file:
             zip_file.write(*self.manifest)
 
-            print(f'Packaged file:\t{self.manifest_path} (as {self.manifest_arc_name})')
+            Log.info('File added to ZIP:\t%s (as %s)' % (self.manifest_path, self.manifest_arc_name))
 
             files = glob.glob(os.path.join(self.redist_path, self.redist_name, '**\*.pak'), recursive=True)
             other_files = [f for f in glob.glob(os.path.join(self.project_path, '**\*.pak'), recursive=True) if
@@ -127,4 +152,4 @@ class Packager(Package):
 
                 zip_file.write(file, arc_name)
 
-                print(f'Packaged file:\t{file} (as {arc_name})')
+                Log.info('File added to ZIP:\t%s (as %s)' % (file, arc_name))
