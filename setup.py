@@ -12,7 +12,7 @@ build_exe_options = {
 }
 
 setup(name='Modsmith',
-      version='0.1.5',
+      version='0.1.6',
       description='Automatically packages Kingdom Come: Deliverance mods for distribution',
       options={'build_exe': build_exe_options},
       executables=[Executable('__main__.py', base=None, targetName='modsmith.exe')])
