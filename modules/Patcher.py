@@ -136,7 +136,3 @@ class Patcher(Package):
             with open(redist_xml_path, mode='w', encoding='utf-8'):
                 et = etree.ElementTree(output_xml, parser=XML_PARSER)
                 et.write(redist_xml_path, encoding='utf-8', pretty_print=True)
-
-            # with open(redist_xml_path, mode='w', encoding='utf-8') as output_file:
-            #     output_data = etree.tostring(output_xml, encoding='utf-8', pretty_print=True)
-            #     output_file.write(output_data.decode('utf-8'))

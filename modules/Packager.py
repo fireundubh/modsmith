@@ -65,7 +65,7 @@ class Packager(Package):
         xml_files = [f for f in all_files if f.endswith('.xml')]
 
         # separate support and unsupported files
-        xml_files_supported = set([f for f in xml_files if not any(x in f for x in Database.get_exclusions())])
+        xml_files_supported = set([f for f in xml_files if not any(x.lower() in f.lower() for x in Database.get_exclusions())])
         xml_files_unsupported = set(xml_files) - set(xml_files_supported)
 
         # generate tbl files and merge them with files to be packaged
