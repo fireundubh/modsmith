@@ -109,6 +109,7 @@ class Database:
             'dlc': ['dlc_id'],
             'editor_object': ['id'],
             'editor_object_binding': ['source_id', 'target_id'],
+            'game_mode': ['game_mode_id', 'game_mode_name'],
             'hdr_preset': ['name'],
             'random_event': ['random_event_id'],
             'random_event_option': ['random_event_option_id'],

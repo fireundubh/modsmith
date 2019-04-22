@@ -10,7 +10,7 @@ from modules.SimpleLogger import SimpleLogger as Log
 from modules.Utils import Utils
 from stdlib.zipfilePatch import ZipFileFixed
 
-XML_PARSER = etree.XMLParser(remove_blank_text=True)
+XML_PARSER = etree.XMLParser(encoding='utf-8', remove_blank_text=True, strip_cdata=False)
 
 
 class Patcher(Package):
@@ -79,7 +79,7 @@ class Patcher(Package):
             self._merge_rows(rows, signatures[xml_file_name[:-4]], output_xml)
 
             redist_xml_path = os.path.join(self.redist_data_path, parent_path, xml_file_name)
-            etree.ElementTree(output_xml).write(redist_xml_path, encoding='us-ascii', pretty_print=True, xml_declaration=True)
+            etree.ElementTree(output_xml, parser=XML_PARSER).write(redist_xml_path, encoding='utf-8', pretty_print=True, xml_declaration=True)
 
     # TODO: support patching localization strings from XLSX and JSON sources
     def patch_i18n(self, xml_file_list: iter) -> None:
@@ -133,5 +133,10 @@ class Patcher(Package):
 
             redist_xml_path = os.path.join(self.redist_i18n_path, relative_xml_path)
 
-            with open(redist_xml_path, mode='w', encoding='utf8') as output_file:
-                output_file.write(etree.tostring(output_xml, pretty_print=True).decode('unicode-escape'))
+            with open(redist_xml_path, mode='w', encoding='utf-8'):
+                et = etree.ElementTree(output_xml, parser=XML_PARSER)
+                et.write(redist_xml_path, encoding='utf-8', pretty_print=True)
+
+            # with open(redist_xml_path, mode='w', encoding='utf-8') as output_file:
+            #     output_data = etree.tostring(output_xml, encoding='utf-8', pretty_print=True)
+            #     output_file.write(output_data.decode('utf-8'))

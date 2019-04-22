@@ -48,8 +48,5 @@ class Package:
             yield target_file, arc_name
 
         for file in unsupported_xml_files.union(non_xml_files):
-            if file.endswith('.tbl'):
-                arc_name = os.path.relpath(file, self.redist_data_path)
-            else:
-                arc_name = os.path.relpath(file, self.project_data_path)
+            arc_name = os.path.relpath(file, self.redist_data_path if file.endswith('.tbl') else self.project_data_path)
             yield file, arc_name
