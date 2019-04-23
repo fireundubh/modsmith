@@ -90,11 +90,11 @@ def main():
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Modsmith by fireundubh')
-    parser.add_argument('-c', '--cfg', action='store', default='modsmith.conf', help='Path to modsmith.conf')
-    parser.add_argument('-p', '--project', action='store', default=None, help='Input project path')
-    parser.add_argument('-l', '--i18n', action='store', default=None, help='Input localization path')
-    parser.add_argument('-d', '--data-package', action='store', default=None, help='Output PAK filename')
-    parser.add_argument('-r', '--redist', action='store', default=None, help='Redistributable ZIP filename')
+    parser.add_argument('-c', dest='cfg', action='store', default='modsmith.conf', help='Path to modsmith.conf')
+    parser.add_argument('-p', dest='project', action='store', default=None, help='Input project path')
+    parser.add_argument('-l', dest='i18n', action='store', default=None, help='Input localization path')
+    parser.add_argument('-d', dest='data_package', action='store', default=None, help='Output PAK filename')
+    parser.add_argument('-r', dest='redist', action='store', default=None, help='Redistributable ZIP filename')
     parser.add_argument('--allow-arbitrary-files', action='store_true', default=False, help='Enable packing arbitrary files')
     parser.add_argument('--debug', action='store_true', default=False, help='Enable logging tracebacks')
     args = parser.parse_args()
