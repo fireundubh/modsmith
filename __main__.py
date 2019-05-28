@@ -2,6 +2,7 @@
 
 import argparse
 import os
+import shutil
 import traceback
 
 from modules.Packager import Packager
@@ -50,6 +51,10 @@ def main():
         if not os.path.exists(packager.manifest_path):
             raise ArgFileNotFoundError('[ERR] Cannot find mod.manifest in project root\n\t'
                                        'All mods require a manifest. Please create a mod.manifest file in the project root.')
+
+        if os.path.exists(packager.redist_path):
+            shutil.rmtree(packager.redist_path, ignore_errors=True)
+            os.makedirs(packager.redist_path, exist_ok=True)
 
         # create pak, if project has game data
         if os.path.exists(packager.project_data_path):
