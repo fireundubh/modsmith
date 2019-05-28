@@ -1,3 +1,4 @@
+import fnmatch
 import glob
 import operator
 import os
@@ -106,6 +107,15 @@ class Packager(Package):
 
         for folder_name in folder_names:
             redist_folder_path = os.path.join(self.redist_i18n_path, folder_name)
+
+            if not os.path.exists(redist_folder_path):
+                Log.warn('Cannot write PAK. Folder missing:\t%s' % redist_folder_path, os.linesep)
+                continue
+
+            if len(fnmatch.filter(os.listdir(redist_folder_path), '*.xml')) == 0:
+                Log.warn('Cannot write PAK. Folder does not contain XML files:\t%s' % redist_folder_path, os.linesep)
+                continue
+
             pak_file_name = redist_folder_path + self.output_pak_extension
 
             Log.info('Writing PAK:\t%s%s%s' % (pak_file_name, os.linesep, self.sep), os.linesep)
