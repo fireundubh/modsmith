@@ -116,6 +116,10 @@ class Patcher(Package):
             # read zipped pak xml
             zip_path = os.path.join(self.config['Game']['Path'], 'Localization', parent_path + '.pak')
 
+            if not os.path.exists(zip_path):
+                Log.warn('Cannot patch XML file using archive. File does not exist:\t%s' % zip_path)
+                continue
+
             with ZipFileFixed(zip_path, mode='r') as data:
                 with data.open(file_name, mode='r') as xml:
                     lines = xml.readlines()
