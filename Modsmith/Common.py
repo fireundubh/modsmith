@@ -30,7 +30,7 @@ class Common:
         return string
 
     @staticmethod
-    @contract(text=str or None)
+    @contract(text=str)
     def strip_whitespace(text: str) -> str:
         """Removes whitespace from string"""
         return text if not text or ' ' not in text else regex.sub('\s+', ' ', text).strip()
