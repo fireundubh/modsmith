@@ -1,22 +1,22 @@
 import struct
-from zipfile import (BadZipFile, ZIP_STORED, ZipExtFile, ZipFile, ZipInfo, _FH_EXTRA_FIELD_LENGTH, _FH_FILENAME_LENGTH, _FH_SIGNATURE, _SharedFile,
-                     _ZipDecrypter, sizeFileHeader, stringFileHeader, structFileHeader)
+
+from zipfile import BadZipFile
+from zipfile import ZipExtFile
+from zipfile import ZipFile
+from zipfile import ZipInfo
+from zipfile import _FH_EXTRA_FIELD_LENGTH
+from zipfile import _FH_FILENAME_LENGTH
+from zipfile import _FH_SIGNATURE
+from zipfile import _SharedFile
+from zipfile import _ZipDecrypter
+from zipfile import sizeFileHeader
+from zipfile import stringFileHeader
+from zipfile import structFileHeader
 
 
+# noinspection Mypy
 class ZipFileFixed(ZipFile):
-    # def __init__(self, file, mode='r', compression=ZIP_STORED, allowZip64=True, compresslevel=None):
-    #     super().__init__(file, mode, compression, allowZip64, compresslevel)
-    #
-    # def __enter__(self):
-    #     super(ZipFileFixed, self).__enter__()
-    #
-    # def __exit__(self, exc_type, exc_val, exc_tb):
-    #     super(ZipFileFixed, self).__exit__(exc_type, exc_val, exc_tb)
-    #
-    # def __repr__(self):
-    #     super(ZipFileFixed, self).__repr__()
-
-    def open(self, name, mode='r', pwd=None, *, force_zip64=False):
+    def open(self, name: str, mode: str = 'r', pwd: bytes = None, *, force_zip64: bool = False) -> ZipExtFile:
         if mode not in {'r', 'w'}:
             raise ValueError('open() requires mode "r" or "w"')
         if pwd and not isinstance(pwd, bytes):

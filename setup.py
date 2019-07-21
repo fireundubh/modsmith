@@ -1,18 +1,33 @@
-# coding=utf-8
+import os
+import sys
 
-from cx_Freeze import Executable, setup
+from setuptools import setup
 
-# Dependencies are automatically detected, but it might need fine tuning.
-build_exe_options = {
-    'packages': ['lxml.etree', 'lxml._elementpath'],
-    'optimize': 2,
-    'include_msvcr': False,
-    'zip_include_packages': '*',
-    'zip_exclude_packages': ''
-}
+from __main__ import __version__ as version
 
-setup(name='Modsmith',
-      version='0.1.11',
+with open(os.path.join(os.path.dirname(__file__), 'README.md'), mode='r') as f:
+    long_description = f.read()
+
+packages = ['modsmith']
+
+if any('bdist' in arg for arg in sys.argv):
+    from nuitka_setuptools import Nuitka, Compile
+
+    build_settings = dict(
+        cmdclass={'build_ext': Nuitka},
+        ext_modules=Compile(packages)
+    )
+else:
+    build_settings = {}
+
+setup(name='modsmith',
+      version=version,
       description='Automatically packages Kingdom Come: Deliverance mods for distribution',
-      options={'build_exe': build_exe_options},
-      executables=[Executable('__main__.py', base=None, targetName='modsmith.exe')])
+      long_description=long_description,
+      author='fireundubh',
+      author_email='fireundubh@gmail.com',
+      url='https://github.com/fireundubh/modsmith',
+      include_package_data=True,
+      cmdclass={'build_ext': Nuitka},
+      py_modules=['nuitka_setuptools'],
+      ext_modules=Compile(['nuitka_setuptools']))

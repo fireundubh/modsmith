@@ -3,61 +3,36 @@
 import argparse
 import os
 import shutil
-import traceback
 
-from modules.Packager import Packager
-from modules.SimpleLogger import SimpleLogger as Log
+from Modsmith.Packager import Packager
+from Modsmith.ProjectOptions import ProjectOptions
+from Modsmith.ProjectSettings import ProjectSettings
+from Modsmith.SimpleLogger import SimpleLogger as Log
 
-
-class ArgFileNotFoundError(FileNotFoundError):
-    pass
-
-
-class ArgNotADirectoryError(NotADirectoryError):
-    pass
+__version__ = '0.2.0'
 
 
-class ArgValueError(ValueError):
-    pass
+class Application:
+    def __init__(self, args: argparse.Namespace) -> None:
+        self.options: ProjectOptions = ProjectOptions(args)
+        self.settings: ProjectSettings = ProjectSettings(self.options)
+        self.debug: bool = self.options.debug
 
+    def run(self) -> None:
+        if not self.options.config_path:
+            raise FileNotFoundError('Cannot find kingdomcome.yaml')
 
-def print_exception(exception):
-    if args.debug:
-        print('%s%s' % (os.linesep, traceback.format_exc()))
-    else:
-        print('%s%s: %s%s' % (os.linesep, type(exception).__name__, exception, os.linesep))
+        packager = Packager(self.settings)
 
+        if not os.path.exists(self.settings.project_manifest_path):
+            raise FileNotFoundError('[ERR] Cannot find required mod.manifest in project root')
 
-def main():
-    try:
-        if not os.path.exists('modsmith.conf'):
-            if not args.cfg or args.cfg and not os.path.exists(args.cfg):
-                raise ArgFileNotFoundError('[ERR] Cannot find modsmith.conf\n\t'
-                                           'Possible reasons:\n\t\t'
-                                           '1. The modsmith.conf file does not exist in the Modsmith install path.\n\t\t'
-                                           '2. The working directory was not set to the Modsmith install path.')
-
-        if not args.project:
-            raise ArgValueError('[ERR] Cannot pass None for project_path')
-
-        if not args.data_package:
-            raise ArgValueError('[ERR] Cannot pass None for pak_filename')
-
-        if not args.redist:
-            raise ArgValueError('[ERR] Cannot pass None for redist_filename')
-
-        packager = Packager(args.project, args.i18n, args.data_package, args.redist, args.cfg, args.allow_arbitrary_files)
-
-        if not os.path.exists(packager.manifest_path):
-            raise ArgFileNotFoundError('[ERR] Cannot find mod.manifest in project root\n\t'
-                                       'All mods require a manifest. Please create a mod.manifest file in the project root.')
-
-        if os.path.exists(packager.redist_path):
-            shutil.rmtree(packager.redist_path, ignore_errors=True)
-            os.makedirs(packager.redist_path, exist_ok=True)
+        if os.path.exists(self.settings.project_build_path):
+            shutil.rmtree(self.settings.project_build_path, ignore_errors=True)
+            os.makedirs(self.settings.project_build_path, exist_ok=True)
 
         # create pak, if project has game data
-        if os.path.exists(packager.project_data_path):
+        if os.path.exists(self.settings.project_data_path):
             Log.info('Starting PAK generation...', os.linesep)
             packager.generate_pak()
             Log.info('PAK generation complete.', os.linesep)
@@ -65,7 +40,7 @@ def main():
             Log.warn('Cannot find Data in project root. Skipping PAK generation.', os.linesep)
 
         # create localization paks, if project has localization
-        if os.path.exists(packager.project_i18n_path):
+        if os.path.exists(self.settings.project_localization_path):
             Log.info('Starting i18n generation...', os.linesep)
             packager.generate_i18n()
             Log.info('i18n generation complete.', os.linesep)
@@ -73,34 +48,53 @@ def main():
             Log.warn('Cannot find Localization in project root. Skipping PAK generation.', os.linesep)
 
         # create redistributable
-        if os.path.exists(packager.redist_path):
+        if os.path.exists(self.settings.project_build_path):
             Log.info('Starting ZIP generation...', os.linesep)
-            packager.pack()
-            Log.info('ZIP generation complete.', os.linesep)
+            output_path: str = packager.pack()
+            Log.info('ZIP generation complete. File path: {}'.format(output_path), os.linesep)
         else:
-            raise ArgNotADirectoryError('[ERR] Cannot package mod because Build directory was not found\n\t'
-                                        'Possible reasons:\n\t\t'
-                                        '1. Project has no Data.\n\t\t'
-                                        '2. Project has no Localization.')
-
-    except (ArgFileNotFoundError, ArgNotADirectoryError, ArgValueError) as e:
-        parser.print_help()
-        print_exception(e)
-        return
-
-    except BaseException as e:
-        print_exception(e)
-        return
+            raise NotADirectoryError('[ERR] Cannot package mod because Build directory was not found\n\t'
+                                     'Possible reasons:\n\t\t'
+                                     '1. Project has no Data.\n\t\t'
+                                     '2. Project has no Localization.')
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Modsmith by fireundubh')
-    parser.add_argument('-c', dest='cfg', action='store', default='modsmith.conf', help='Path to modsmith.conf')
-    parser.add_argument('-p', dest='project', action='store', default=None, help='Input project path')
-    parser.add_argument('-l', dest='i18n', action='store', default=None, help='Input localization path')
-    parser.add_argument('-d', dest='data_package', action='store', default=None, help='Output PAK filename')
-    parser.add_argument('-r', dest='redist', action='store', default=None, help='Redistributable ZIP filename')
-    parser.add_argument('--allow-arbitrary-files', action='store_true', default=False, help='Enable packing arbitrary files')
-    parser.add_argument('--debug', action='store_true', default=False, help='Enable logging tracebacks')
-    args = parser.parse_args()
-    main()
+    _parser = argparse.ArgumentParser(description='Modsmith v%s by fireundubh' % __version__)
+
+    _group1 = _parser.add_argument_group('path arguments')
+
+    _group1.add_argument('-c', '--config-path',
+                         action='store', type=str, default=os.path.join(os.path.dirname(__file__), 'kingdomcome.yaml'),
+                         help='Path to YAML configuration')
+
+    _group1.add_argument('-i', '--project-path',
+                         required=True,
+                         action='store', type=str, default='',
+                         help='Path to project')
+
+    _group1.add_argument('-l', '--localization-path',
+                         action='store', type=str, default='',
+                         help='Path to localization')
+
+    _group2 = _parser.add_argument_group('file arguments')
+
+    _group2.add_argument('-o', '--pak-file-name',
+                         action='store', type=str, default='',
+                         help='Target PAK file name')
+
+    _group2.add_argument('-z', '--zip-file-name',
+                         action='store', type=str, default='',
+                         help='Target ZIP file name')
+
+    _group3 = _parser.add_argument_group('miscellaneous arguments')
+
+    _group3.add_argument('--pack-assets',
+                         action='store_true', default=False,
+                         help='Pack all assets')
+
+    _group3.add_argument('--debug',
+                         action='store_true', default=False,
+                         help='Enable logging tracebacks')
+
+    Application(_parser.parse_args()).run()

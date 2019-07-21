@@ -1,5 +1,7 @@
 .idea/
+.mypy_cache/
 bin/
 Build/
+example_projects/
 test_data/
 *.pyc

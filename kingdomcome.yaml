@@ -1,0 +1,1719 @@
+---
+Exclusions:
+ - Data/_fastload
+ - Data/Animations
+ - Data/Engine
+ - Data/Entities
+ - Data/Levels
+ - Data/Libs/ActionSpotSystem.xml
+ - Data/Libs/Compatibility.xml
+ - Data/Libs/SmartObjects.xml
+ - Data/Libs/AI
+ - Data/Libs/AIBrain
+ - Data/Libs/ActionGraphs
+ - Data/Libs/Animation
+ - Data/Libs/AnimationGraphTemplates
+ - Data/Libs/BodyDamage
+ - Data/Libs/Clouds
+ - Data/Libs/Communication
+ - Data/Libs/Config
+ - Data/Libs/CryHttp
+ - Data/Libs/Dialogs
+ - Data/Libs/EntityArchetypes
+ - Data/Libs/EquipmentPacks
+ - Data/Libs/Flares
+ - Data/Libs/FlowNodes
+ - Data/Libs/FlowgraphModules
+ - Data/Libs/GameAudio
+ - Data/Libs/GameForceFeedback
+ - Data/Libs/GameTokens
+ - Data/Libs/Haste
+ - Data/Libs/Items
+ - Data/Libs/Levels
+ - Data/Libs/LightningArc
+ - Data/Libs/Localization
+ - Data/Libs/LuaXML
+ - Data/Libs/MaterialEffects
+ - Data/Libs/MovementTransitions
+ - Data/Libs/MusicLogic
+ - Data/Libs/Particles
+ - Data/Libs/Quests
+ - Data/Libs/Readability
+ - Data/Libs/ReverbPresets
+ - Data/Libs/SmartObjects
+ - Data/Libs/SoundMoods
+ - Data/Libs/Storm
+ - Data/Libs/Telemetry
+ - Data/Libs/UI
+ - Data/Libs/Weather
+ - Data/Libs/splinedistr
+ - Data/Materials
+ - Data/Music
+ - Data/Objects
+ - Data/Patch
+ - Data/Prefabs
+ - Data/Scripts
+
+Localization:
+ - text_rich_presence.xml
+ - text_ui_HUD.xml
+ - text_ui_dialog.xml
+ - text_ui_ingame.xml
+ - text_ui_items.xml
+ - text_ui_menus.xml
+ - text_ui_minigames.xml
+ - text_ui_misc.xml
+ - text_ui_quest.xml
+ - text_ui_soul.xml
+ - text_ui_tutorials.xml
+ 
+Packages:
+ Data/Entities: Scripts.pak
+ Data/Libs/AI: Scripts.pak
+ Data/Libs/Haste: Scripts.pak
+ Data/Libs/Tables: Tables.pak
+ Data/Scripts: Scripts.pak
+
+Signatures:
+ - Data/Libs/Tables/character_beard.xml:
+   - element: row
+     attributes:
+     - character_beard_id
+ - Data/Libs/Tables/character_body.xml:
+   - element: row
+     attributes:
+     - character_body_id
+ - Data/Libs/Tables/character_hair.xml:
+   - element: row
+     attributes:
+     - character_hair_id
+ - Data/Libs/Tables/character_head.xml:
+   - element: row
+     attributes:
+     - character_head_id
+ - Data/Libs/Tables/dlc.xml:
+   - element: row
+     attributes:
+     - dlc_id
+ - Data/Libs/Tables/editor_object.xml:
+   - element: row
+     attributes:
+     - id
+ - Data/Libs/Tables/editor_object_binding.xml:
+   - element: row
+     attributes:
+     - source_id
+     - target_id
+ - Data/Libs/Tables/game_mode.xml:
+   - element: row
+     attributes:
+     - game_mode_id
+     - game_mode_name
+ - Data/Libs/Tables/hdr_preset.xml:
+   - element: row
+     attributes:
+     - name
+ - Data/Libs/Tables/random_event.xml:
+   - element: row
+     attributes:
+     - random_event_id
+ - Data/Libs/Tables/random_event_option.xml:
+   - element: row
+     attributes:
+     - random_event_option_id
+ - Data/Libs/Tables/random_event_option_set.xml:
+   - element: row
+     attributes:
+     - random_event_option_set_id
+ - Data/Libs/Tables/random_event_source_type.xml:
+   - element: row
+     attributes:
+     - random_event_source_type_id
+ - Data/Libs/Tables/action/actor_action_fragment_id_mapping.xml:
+   - element: row
+     attributes:
+     - actor_action_fragment_id_mapping_id
+ - Data/Libs/Tables/action/actor_action_standup.xml:
+   - element: row
+     attributes:
+     - animation_id
+ - Data/Libs/Tables/action/actor_action_transition_to_combat.xml:
+   - element: row
+     attributes:
+     - actor_action_type_id
+     - actor_action_type_id_request
+     - actor_activity_id
+     - actor_pose_id
+     - mn_fragment_id
+     - mn_tags
+ - Data/Libs/Tables/action/actor_action_type.xml:
+   - element: row
+     attributes:
+     - actor_action_type_id
+ - Data/Libs/Tables/action/actor_action_type_group.xml:
+   - element: row
+     attributes:
+     - actor_action_type_group_id
+     - actor_action_type_id
+ - Data/Libs/Tables/action/actor_activity.xml:
+   - element: row
+     attributes:
+     - actor_activity_id
+ - Data/Libs/Tables/action/actor_pose.xml:
+   - element: row
+     attributes:
+     - actor_pose_id
+ - Data/Libs/Tables/action/actor_tag_mapping.xml:
+   - element: row
+     attributes:
+     - mn_tag
+ - Data/Libs/Tables/ai/ai_body.xml:
+   - element: row
+     attributes:
+     - ai_body_id
+ - Data/Libs/Tables/ai/ai_body2brain_sensor.xml:
+   - element: row
+     attributes:
+     - brain_sensor_id
+ - Data/Libs/Tables/ai/ai_body2npc_reference_point.xml:
+   - element: row
+     attributes:
+     - ai_body_id
+     - npc_reference_point_id
+ - Data/Libs/Tables/ai/ai_percept_handler.xml:
+   - element: row
+     attributes:
+     - ai_percept_handler_id
+ - Data/Libs/Tables/ai/ai_percept_handler_type.xml:
+   - element: row
+     attributes:
+     - ai_percept_handler_type_id
+ - Data/Libs/Tables/ai/ai_variable_form.xml:
+   - element: row
+     attributes:
+     - ai_variable_form_id
+ - Data/Libs/Tables/ai/ai_variable_sync.xml:
+   - element: row
+     attributes:
+     - ai_variable_sync_id
+ - Data/Libs/Tables/ai/brain.xml:
+   - element: row
+     attributes:
+     - brain_id
+ - Data/Libs/Tables/ai/brain2brain_interpreter.xml:
+   - element: row
+     attributes:
+     - brain_id
+     - brain_interpreter_id
+ - Data/Libs/Tables/ai/brain2mailbox.xml:
+   - element: row
+     attributes:
+     - brain_id
+     - mailbox_id
+ - Data/Libs/Tables/ai/brain2subbrain.xml:
+   - element: row
+     attributes:
+     - brain_id
+     - subbrain_id
+ - Data/Libs/Tables/ai/brain_interpreter.xml:
+   - element: row
+     attributes:
+     - brain_interpreter_id
+ - Data/Libs/Tables/ai/brain_interpreter2brain_message_type.xml:
+   - element: row
+     attributes:
+     - brain_interpreter_id
+     - brain_message_type_id
+ - Data/Libs/Tables/ai/brain_interpreter_type.xml:
+   - element: row
+     attributes:
+     - brain_interpreter_type_id
+ - Data/Libs/Tables/ai/brain_message_type.xml:
+   - element: row
+     attributes:
+     - brain_message_type_id
+ - Data/Libs/Tables/ai/brain_sensor.xml:
+   - element: row
+     attributes:
+     - brain_sensor_id
+ - Data/Libs/Tables/ai/brain_sensor_type.xml:
+   - element: row
+     attributes:
+     - brain_sensor_type_id
+ - Data/Libs/Tables/ai/brain_variable.xml:
+   - element: row
+     attributes:
+     - brain_variable_name
+ - Data/Libs/Tables/ai/mailbox.xml:
+   - element: row
+     attributes:
+     - mailbox_id
+ - Data/Libs/Tables/ai/mailbox_action_type.xml:
+   - element: row
+     attributes:
+     - mailbox_action_type_id
+ - Data/Libs/Tables/ai/mailbox_filter.xml:
+   - element: row
+     attributes:
+     - mailbox_filter_id
+ - Data/Libs/Tables/ai/mailbox_filter_action.xml:
+   - element: row
+     attributes:
+     - mailbox_filter_action_id
+ - Data/Libs/Tables/ai/mailbox_group.xml:
+   - element: row
+     attributes:
+     - mailbox_group_id
+ - Data/Libs/Tables/ai/mailbox_group2mailbox.xml:
+   - element: row
+     attributes:
+     - mailbox_group_id
+     - mailbox_id
+ - Data/Libs/Tables/ai/mailbox_rule.xml:
+   - element: row
+     attributes:
+     - mailbox_rule_id
+ - Data/Libs/Tables/ai/npc_reference_point.xml:
+   - element: row
+     attributes:
+     - npc_reference_point_id
+ - Data/Libs/Tables/ai/positioning_shape.xml:
+   - element: row
+     attributes:
+     - positioning_shape_name
+ - Data/Libs/Tables/ai/positioning_vertex.xml:
+   - element: row
+     attributes:
+     - order_by
+     - positioning_shape_id
+ - Data/Libs/Tables/ai/sa_behaviour_action.xml:
+   - element: row
+     attributes:
+     - sa_behaviour_action_id
+ - Data/Libs/Tables/ai/sa_behaviour_tag.xml:
+   - element: row
+     attributes:
+     - sa_behaviour_tag_id
+ - Data/Libs/Tables/ai/sa_behaviour_tag2mailbox.xml:
+   - element: row
+     attributes:
+     - mailbox_id
+     - sa_behaviour_tag_id
+ - Data/Libs/Tables/ai/sa_behaviour_tag_parent.xml:
+   - element: row
+     attributes:
+     - child_tag_id
+     - parent_tag_id
+ - Data/Libs/Tables/ai/sa_smart_area.xml:
+   - element: row
+     attributes:
+     - sa_smart_area_id
+ - Data/Libs/Tables/ai/sa_smart_area2sa_behaviour_tag.xml:
+   - element: row
+     attributes:
+     - sa_behaviour_tag_id
+ - Data/Libs/Tables/ai/se_condition_type.xml:
+   - element: row
+     attributes:
+     - se_condition_type_id
+ - Data/Libs/Tables/ai/situation.xml:
+   - element: row
+     attributes:
+     - situation_id
+ - Data/Libs/Tables/ai/situation_frequency.xml:
+   - element: row
+     attributes:
+     - situation_frequency_id
+ - Data/Libs/Tables/ai/situation_global_condition.xml:
+   - element: row
+     attributes:
+     - situation_global_condition_id
+ - Data/Libs/Tables/ai/situation_role.xml:
+   - element: row
+     attributes:
+     - situation_role_id
+ - Data/Libs/Tables/ai/situation_role2mailbox.xml:
+   - element: row
+     attributes:
+     - mailbox_id
+     - situation_role_id
+ - Data/Libs/Tables/ai/situation_role_condition.xml:
+   - element: row
+     attributes:
+     - situation_role_condition_name
+ - Data/Libs/Tables/ai/situation_role_tree.xml:
+   - element: row
+     attributes:
+     - situation_role_id
+     - tree_name
+ - Data/Libs/Tables/ai/situation_variant.xml:
+   - element: row
+     attributes:
+     - situation_variant_id
+ - Data/Libs/Tables/ai/so_behaviour_action.xml:
+   - element: row
+     attributes:
+     - so_behaviour_action_id
+ - Data/Libs/Tables/ai/so_behaviour_state.xml:
+   - element: row
+     attributes:
+     - so_behaviour_state_id
+ - Data/Libs/Tables/ai/so_behaviour_tag.xml:
+   - element: row
+     attributes:
+     - so_behaviour_tag_id
+ - Data/Libs/Tables/ai/so_behaviour_tag2mailbox.xml:
+   - element: row
+     attributes:
+     - mailbox_id
+     - so_behaviour_tag_id
+ - Data/Libs/Tables/ai/so_behaviour_tag_condition.xml:
+   - element: row
+     attributes:
+     - so_condition_id
+ - Data/Libs/Tables/ai/so_behaviour_tag_navigation.xml:
+   - element: row
+     attributes:
+     - so_behaviour_tag_id
+ - Data/Libs/Tables/ai/so_behaviour_tag_parent.xml:
+   - element: row
+     attributes:
+     - child_tag_id
+     - parent_tag_id
+ - Data/Libs/Tables/ai/so_item_smart_object.xml:
+   - element: row
+     attributes:
+     - item_class_id
+     - so_smart_object_id
+ - Data/Libs/Tables/ai/so_smart_object.xml:
+   - element: row
+     attributes:
+     - so_smart_object_id
+ - Data/Libs/Tables/ai/so_smart_object2so_behaviour_tag.xml:
+   - element: row
+     attributes:
+     - so_behaviour_tag_id
+ - Data/Libs/Tables/ai/subbrain.xml:
+   - element: row
+     attributes:
+     - subbrain_id
+ - Data/Libs/Tables/ai/subbrain2ai_percept_handler.xml:
+   - element: row
+     attributes:
+     - ai_percept_handler_id
+     - subbrain_id
+ - Data/Libs/Tables/ai/subbrain_behaviour_tree.xml:
+   - element: row
+     attributes:
+     - subbrain_id
+ - Data/Libs/Tables/ai/subbrain_combat.xml:
+   - element: row
+     attributes:
+     - subbrain_id
+ - Data/Libs/Tables/ai/subbrain_dialog.xml:
+   - element: row
+     attributes:
+     - subbrain_id
+ - Data/Libs/Tables/ai/subbrain_situation.xml:
+   - element: row
+     attributes:
+     - subbrain_id
+ - Data/Libs/Tables/ai/subbrain_smart_area.xml:
+   - element: row
+     attributes:
+     - subbrain_id
+ - Data/Libs/Tables/ai/subbrain_smart_object.xml:
+   - element: row
+     attributes:
+     - subbrain_id
+ - Data/Libs/Tables/ai/subbrain_switching.xml:
+   - element: row
+     attributes:
+     - subbrain_id
+ - Data/Libs/Tables/ai/subbrain_type.xml:
+   - element: row
+     attributes:
+     - subbrain_type_id
+ - Data/Libs/Tables/animation/ai_fragment_exclude.xml:
+   - element: row
+     attributes:
+     - ai_fragment_exclude_id
+ - Data/Libs/Tables/animation/anim_fragment.xml:
+   - element: row
+     attributes:
+     - actor_class_hash
+     - mn_fragment_id
+     - mn_tags
+ - Data/Libs/Tables/animation/anim_fragment_do_not_interrupt.xml:
+   - element: row
+     attributes:
+     - actor_class_hash
+     - mn_fragment_id
+     - mn_tags
+ - Data/Libs/Tables/animation/anim_fragment_events.xml:
+   - element: row
+     attributes:
+     - abs_event_time
+     - event_name
+     - actor_class_hash
+     - mn_fragment_id
+     - mn_option_index
+     - mn_tags
+ - Data/Libs/Tables/animation/hit_reaction.xml:
+   - element: row
+     attributes:
+     - actor_class_hash
+     - hit_reaction_type_id
+     - mn_fragment_id_str
+     - mn_tag_state_str
+     - mn_option_index
+ - Data/Libs/Tables/animation/hit_reaction_type.xml:
+   - element: row
+     attributes:
+     - hit_reaction_type_id
+ - Data/Libs/Tables/animation/jump.xml:
+   - element: row
+     attributes:
+     - actor_class_hash
+     - mn_fragment_id
+     - mn_tags
+ - Data/Libs/Tables/animation/ladder.xml:
+   - element: row
+     attributes:
+     - actor_class_hash
+     - mn_fragment_id
+     - mn_tags
+ - Data/Libs/Tables/animation/mn_fragment.xml:
+   - element: row
+     attributes:
+     - mn_fragment_id
+ - Data/Libs/Tables/animation/picking.xml:
+   - element: row
+     attributes:
+     - actor_class_hash
+     - mn_frag_tag_state
+ - Data/Libs/Tables/combat/combat_action_attack.xml:
+   - element: row
+     attributes:
+     - mn_tags
+ - Data/Libs/Tables/combat/combat_action_block.xml:
+   - element: row
+     attributes:
+     - blk_mn_tags
+ - Data/Libs/Tables/combat/combat_action_block_movement.xml:
+   - element: row
+     attributes:
+     - mn_tags
+ - Data/Libs/Tables/combat/combat_action_failed_attack.xml:
+   - element: row
+     attributes:
+     - mn_tags
+ - Data/Libs/Tables/combat/combat_action_fragment_id_mapping.xml:
+   - element: row
+     attributes:
+     - combat_action_fragment_id_mapping_id
+ - Data/Libs/Tables/combat/combat_action_guard_movement.xml:
+   - element: row
+     attributes:
+     - mn_tags
+ - Data/Libs/Tables/combat/combat_action_guard_sync_movement.xml:
+   - element: row
+     attributes:
+     - mn_tags
+ - Data/Libs/Tables/combat/combat_action_hit.xml:
+   - element: row
+     attributes:
+     - hit_mn_tags
+ - Data/Libs/Tables/combat/combat_action_hit_movement.xml:
+   - element: row
+     attributes:
+     - mn_tags
+ - Data/Libs/Tables/combat/combat_action_perfect_block.xml:
+   - element: row
+     attributes:
+     - blk_mn_tags
+ - Data/Libs/Tables/combat/combat_action_pose_modifier.xml:
+   - element: row
+     attributes:
+     - mn_tags
+ - Data/Libs/Tables/combat/combat_action_sync_attack.xml:
+   - element: row
+     attributes:
+     - mn_tags
+ - Data/Libs/Tables/combat/combat_action_sync_hit.xml:
+   - element: row
+     attributes:
+     - mn_tags
+ - Data/Libs/Tables/combat/combat_action_sync_pb_hit.xml:
+   - element: row
+     attributes:
+     - mn_tags
+ - Data/Libs/Tables/combat/combat_action_sync_transition.xml:
+   - element: row
+     attributes:
+     - mn_tags
+ - Data/Libs/Tables/combat/combat_action_text.xml:
+   - element: row
+     attributes:
+     - string_name
+ - Data/Libs/Tables/combat/combat_action_trigger.xml:
+   - element: row
+     attributes:
+     - combat_action_trigger_id
+ - Data/Libs/Tables/combat/combat_action_type.xml:
+   - element: row
+     attributes:
+     - combat_action_type_id
+ - Data/Libs/Tables/combat/combat_action_type_group.xml:
+   - element: row
+     attributes:
+     - combat_action_type_group_id
+     - combat_action_type_id
+ - Data/Libs/Tables/combat/combat_action_type_mapping.xml:
+   - element: row
+     attributes:
+     - dst_action_type_id
+     - src_action_type_id
+ - Data/Libs/Tables/combat/combat_attack_config.xml:
+   - element: row
+     attributes:
+     - combat_attack_config_id
+ - Data/Libs/Tables/combat/combat_attack_hit_statistics.xml:
+   - element: row
+     attributes:
+     - body_subpart_id
+     - hit_count
+ - Data/Libs/Tables/combat/combat_attack_type.xml:
+   - element: row
+     attributes:
+     - combat_attack_type_id
+ - Data/Libs/Tables/combat/combat_attack_type_tag.xml:
+   - element: row
+     attributes:
+     - combat_attack_type_id
+     - combat_tag_id
+ - Data/Libs/Tables/combat/combat_combo.xml:
+   - element: row
+     attributes:
+     - combat_combo_id
+ - Data/Libs/Tables/combat/combat_combo_step.xml:
+   - element: row
+     attributes:
+     - combat_combo_id
+     - step
+ - Data/Libs/Tables/combat/combat_damage_type_mapping.xml:
+   - element: row
+     attributes:
+     - combat_attack_type_id
+     - r_weapon_class_id
+     - r_weapon_sub_class_id
+     - rpg_damage_type_id
+ - Data/Libs/Tables/combat/combat_guard_stance.xml:
+   - element: row
+     attributes:
+     - combat_guard_stance_id
+ - Data/Libs/Tables/combat/combat_guard_type.xml:
+   - element: row
+     attributes:
+     - combat_guard_type_id
+ - Data/Libs/Tables/combat/combat_hit_origin.xml:
+   - element: row
+     attributes:
+     - combat_hit_origin_id
+ - Data/Libs/Tables/combat/combat_hit_type.xml:
+   - element: row
+     attributes:
+     - combat_hit_type_id
+ - Data/Libs/Tables/combat/combat_input_class.xml:
+   - element: row
+     attributes:
+     - combat_input_class_id
+ - Data/Libs/Tables/combat/combat_native_guard_zone.xml:
+   - element: row
+     attributes:
+     - combat_guard_stance_id
+     - combat_zone_id
+     - l_weapon_class_id
+     - r_weapon_class_id
+ - Data/Libs/Tables/combat/combat_native_guard_zones.xml:
+   - element: row
+     attributes:
+     - combat_guard_stance_id
+     - combat_zone_id
+ - Data/Libs/Tables/combat/combat_riposte_chain.xml:
+   - element: row
+     attributes:
+     - combat_riposte_chain_strid
+ - Data/Libs/Tables/combat/combat_riposte_chain_step.xml:
+   - element: row
+     attributes:
+     - combat_riposte_chain_id
+     - step
+ - Data/Libs/Tables/combat/combat_side.xml:
+   - element: row
+     attributes:
+     - combat_side_id
+ - Data/Libs/Tables/combat/combat_sync_action_hit.xml:
+   - element: row
+     attributes:
+     - mn_fragment_id
+ - Data/Libs/Tables/combat/combat_tag.xml:
+   - element: row
+     attributes:
+     - combat_tag_id
+ - Data/Libs/Tables/combat/combat_ui_rules.xml:
+   - element: row
+     attributes:
+     - combat_ui_rules_id
+ - Data/Libs/Tables/combat/combat_weapon_group.xml:
+   - element: row
+     attributes:
+     - combat_weapon_group_id
+ - Data/Libs/Tables/combat/combat_weapon_group_to_class.xml:
+   - element: row
+     attributes:
+     - combat_weapon_group_id
+     - weapon_class_id
+ - Data/Libs/Tables/combat/combat_zone.xml:
+   - element: row
+     attributes:
+     - combat_zone_id
+ - Data/Libs/Tables/combat/combat_zone_config.xml:
+   - element: row
+     attributes:
+     - combat_zone_config_id
+ - Data/Libs/Tables/combat/combat_zone_distance.xml:
+   - element: row
+     attributes:
+     - src_combat_zone_id
+     - dst_combat_zone_id
+ - Data/Libs/Tables/combat/combat_zone_mapping.xml:
+   - element: row
+     attributes:
+     - src_zone_id
+     - dst_zone_id
+     - weapon_class_id
+     - combat_input_class_id
+     - combat_attack_type_id
+     - combat_action_type_id
+ - Data/Libs/Tables/combat/combat_zone_tag.xml:
+   - element: row
+     attributes:
+     - combat_zone_id
+ - Data/Libs/Tables/DBEntity/entity_link.xml:
+   - element: row
+     attributes:
+     - entity_id
+     - target_id
+ - Data/Libs/Tables/combat/stash.xml:
+   - element: row
+     attributes:
+     - stash_id
+ - Data/Libs/Tables/inventory/gold_dayone_stash_diff.xml:
+   - element: row
+     attributes:
+     - item_guid
+ - Data/Libs/Tables/inventory/inventories_01_03.xml:
+   - element: row
+     attributes:
+     - item_guid
+ - Data/Libs/Tables/inventory/inventories_01_04.xml:
+   - element: row
+     attributes:
+     - item_guid
+ - Data/Libs/Tables/inventory/inventories_01_05.xml:
+   - element: row
+     attributes:
+     - item_guid
+ - Data/Libs/Tables/inventory/inventories_01_06.xml:
+   - element: row
+     attributes:
+     - item_guid
+ - Data/Libs/Tables/inventory/inventories_01_06_02.xml:
+   - element: row
+     attributes:
+     - item_guid
+ - Data/Libs/Tables/inventory/inventories_01_07.xml:
+   - element: row
+     attributes:
+     - item_guid
+ - Data/Libs/Tables/inventory/inventories_01_07_01.xml:
+   - element: row
+     attributes:
+     - item_guid
+ - Data/Libs/Tables/inventory/inventories_01_08.xml:
+   - element: row
+     attributes:
+     - item_guid
+ - Data/Libs/Tables/inventory/inventories_01_09.xml:
+   - element: row
+     attributes:
+     - item_guid
+ - Data/Libs/Tables/inventory/inventories_01_09_dlc4.xml:
+   - element: row
+     attributes:
+     - item_guid
+ - Data/Libs/Tables/inventory/inventories_day1patch.xml:
+   - element: row
+     attributes:
+     - item_guid
+ - Data/Libs/Tables/inventory/inventories_gold.xml:
+   - element: row
+     attributes:
+     - item_guid
+ - Data/Libs/Tables/inventory/inventories_week1patch.xml:
+   - element: row
+     attributes:
+     - item_guid
+ - Data/Libs/Tables/inventory/inventory.xml:
+   - element: row
+     attributes:
+     - item_id
+ - Data/Libs/Tables/inventory/inventory_preset.xml:
+   - element: row
+     attributes:
+     - inventory_preset_id
+ - Data/Libs/Tables/inventory/inventory_preset2item.xml:
+   - element: row
+     attributes:
+     - inventory_preset_id
+     - item_id
+ - Data/Libs/Tables/inventory/inventory2inventory_preset.xml:
+   - element: row
+     attributes:
+     - inventory_preset_id
+ - Data/Libs/Tables/inventory/inventory2item.xml:
+   - element: row
+     attributes:
+     - inventory_id
+     - item_id
+ - Data/Libs/Tables/item/alchemy_base.xml:
+   - element: row
+     attributes:
+     - item_id
+ - Data/Libs/Tables/item/alchemy_material.xml:
+   - element: row
+     attributes:
+     - item_id
+ - Data/Libs/Tables/item/alchemy_material_subtype.xml:
+   - element: row
+     attributes:
+     - alchemy_material_subtype_id
+ - Data/Libs/Tables/item/alchemy_material_type.xml:
+   - element: row
+     attributes:
+     - alchemy_material_type_id
+ - Data/Libs/Tables/item/ammo.xml:
+   - element: row
+     attributes:
+     - item_id
+ - Data/Libs/Tables/item/ammo_class.xml:
+   - element: row
+     attributes:
+     - ammo_class_id
+ - Data/Libs/Tables/item/armor.xml:
+   - element: row
+     attributes:
+     - item_id
+ - Data/Libs/Tables/item/armor2clothing_attachment.xml:
+   - element: row
+     attributes:
+     - item_id
+ - Data/Libs/Tables/item/armor2clothing_preset.xml:
+   - element: row
+     attributes:
+     - armor_id
+ - Data/Libs/Tables/item/armor_archetype.xml:
+   - element: row
+     attributes:
+     - armor_archetype_id
+ - Data/Libs/Tables/item/armor_archetype2body_subpart.xml:
+   - element: row
+     attributes:
+     - armor_archetype_id
+     - body_subpart_id
+ - Data/Libs/Tables/item/armor_class2engine_surface.xml:
+   - element: row
+     attributes:
+     - armor_class_id
+ - Data/Libs/Tables/item/armor_subtype.xml:
+   - element: row
+     attributes:
+     - armor_subtype_id
+ - Data/Libs/Tables/item/armor_type.xml:
+   - element: row
+     attributes:
+     - armor_type_id
+ - Data/Libs/Tables/item/attachment2clothing_preset.xml:
+   - element: row
+     attributes:
+     - attachment_base_id
+ - Data/Libs/Tables/item/attachment_base.xml:
+   - element: row
+     attributes:
+     - attachment_base_id
+ - Data/Libs/Tables/item/attachment_slot.xml:
+   - element: row
+     attributes:
+     - attachment_slot_id
+ - Data/Libs/Tables/item/blood_zone.xml:
+   - element: row
+     attributes:
+     - blood_zone_id
+ - Data/Libs/Tables/item/body_layer.xml:
+   - element: row
+     attributes:
+     - body_layer_id
+ - Data/Libs/Tables/item/body_material2subpart.xml:
+   - element: row
+     attributes:
+     - race_id
+     - body_material_name
+     - body_subpart_id
+ - Data/Libs/Tables/item/body_part.xml:
+   - element: row
+     attributes:
+     - body_part_id
+ - Data/Libs/Tables/item/body_subpart.xml:
+   - element: row
+     attributes:
+     - body_subpart_id
+ - Data/Libs/Tables/item/character_head_archetype.xml:
+   - element: row
+     attributes:
+     - character_head_archetype_id
+ - Data/Libs/Tables/item/clothing.xml:
+   - element: row
+     attributes:
+     - clothing_id
+ - Data/Libs/Tables/item/clothing_attachment.xml:
+   - element: row
+     attributes:
+     - clothing_attachment_id
+ - Data/Libs/Tables/item/clothing_mesh_data.xml:
+   - element: row
+     attributes:
+     - mesh_file_path
+ - Data/Libs/Tables/item/clothing_preset.xml:
+   - element: row
+     attributes:
+     - clothing_preset_id
+ - Data/Libs/Tables/item/clothing_raycast.xml:
+   - element: row
+     attributes:
+     - material
+ - Data/Libs/Tables/item/consumable_item.xml:
+   - element: row
+     attributes:
+     - item_id
+ - Data/Libs/Tables/item/die.xml:
+   - element: row
+     attributes:
+     - item_id
+ - Data/Libs/Tables/item/divisible_item.xml:
+   - element: row
+     attributes:
+     - item_id
+ - Data/Libs/Tables/item/document.xml:
+   - element: row
+     attributes:
+     - item_id
+ - Data/Libs/Tables/item/document_class.xml:
+   - element: row
+     attributes:
+     - document_class_id
+ - Data/Libs/Tables/item/document_content.xml:
+   - element: row
+     attributes:
+     - text
+ - Data/Libs/Tables/item/document_content_images.xml:
+   - element: row
+     attributes:
+     - image
+ - Data/Libs/Tables/item/document_transcription_topic.xml:
+   - element: row
+     attributes:
+     - text_id
+ - Data/Libs/Tables/item/document_ui_layout.xml:
+   - element: row
+     attributes:
+     - document_ui_layout_id
+ - Data/Libs/Tables/item/equipment_part.xml:
+   - element: row
+     attributes:
+     - equipment_part_id
+ - Data/Libs/Tables/item/equipment_slot.xml:
+   - element: row
+     attributes:
+     - equipment_slot_name
+ - Data/Libs/Tables/item/equippable_item.xml:
+   - element: row
+     attributes:
+     - item_id
+ - Data/Libs/Tables/item/food.xml:
+   - element: row
+     attributes:
+     - item_id
+ - Data/Libs/Tables/item/food_subtype.xml:
+   - element: row
+     attributes:
+     - food_subtype_id
+ - Data/Libs/Tables/item/food_type.xml:
+   - element: row
+     attributes:
+     - food_type_id
+ - Data/Libs/Tables/item/helmet.xml:
+   - element: row
+     attributes:
+     - item_id
+ - Data/Libs/Tables/item/herb.xml:
+   - element: row
+     attributes:
+     - item_id
+ - Data/Libs/Tables/item/herb_element_type.xml:
+   - element: row
+     attributes:
+     - id
+ - Data/Libs/Tables/item/item.xml:
+   - element: row
+     attributes:
+     - item_id
+ - Data/Libs/Tables/item/item_category.xml:
+   - element: row
+     attributes:
+     - item_category_id
+ - Data/Libs/Tables/item/item_manipulation_type.xml:
+   - element: row
+     attributes:
+     - id
+ - Data/Libs/Tables/item/item_phase.xml:
+   - element: row
+     attributes:
+     - model
+ - Data/Libs/Tables/item/key.xml:
+   - element: row
+     attributes:
+     - item_id
+ - Data/Libs/Tables/item/key_subtype.xml:
+   - element: row
+     attributes:
+     - key_subtype_id
+ - Data/Libs/Tables/item/key_type.xml:
+   - element: row
+     attributes:
+     - key_type_id
+ - Data/Libs/Tables/item/keyring.xml:
+   - element: row
+     attributes:
+     - item_id
+ - Data/Libs/Tables/item/keyring_type.xml:
+   - element: row
+     attributes:
+     - keyring_type_id
+ - Data/Libs/Tables/item/melee_weapon.xml:
+   - element: row
+     attributes:
+     - item_id
+ - Data/Libs/Tables/item/melee_weapon_type.xml:
+   - element: row
+     attributes:
+     - melee_weapon_type_id
+ - Data/Libs/Tables/item/misc.xml:
+   - element: row
+     attributes:
+     - item_id
+ - Data/Libs/Tables/item/misc_subtype.xml:
+   - element: row
+     attributes:
+     - misc_subtype_id
+ - Data/Libs/Tables/item/misc_type.xml:
+   - element: row
+     attributes:
+     - misc_type_id
+ - Data/Libs/Tables/item/missile_weapon.xml:
+   - element: row
+     attributes:
+     - item_id
+ - Data/Libs/Tables/item/missile_weapon_class2ammo_class.xml:
+   - element: row
+     attributes:
+     - missile_weapon_class_id
+ - Data/Libs/Tables/item/missile_weapon_type.xml:
+   - element: row
+     attributes:
+     - missile_weapon_type_id
+ - Data/Libs/Tables/item/npc_tool.xml:
+   - element: row
+     attributes:
+     - item_id
+ - Data/Libs/Tables/item/npc_tool_subtype.xml:
+   - element: row
+     attributes:
+     - npc_tool_subtype_id
+ - Data/Libs/Tables/item/npc_tool_type.xml:
+   - element: row
+     attributes:
+     - npc_tool_type_id
+ - Data/Libs/Tables/item/ointment_item.xml:
+   - element: row
+     attributes:
+     - item_id
+ - Data/Libs/Tables/item/ointment_item_subtype.xml:
+   - element: row
+     attributes:
+     - ointment_item_subtype_id
+ - Data/Libs/Tables/item/ointment_item_type.xml:
+   - element: row
+     attributes:
+     - ointment_item_type_id
+ - Data/Libs/Tables/item/pickable_area_desc.xml:
+   - element: row
+     attributes:
+     - id
+ - Data/Libs/Tables/item/pickable_area_material.xml:
+   - element: row
+     attributes:
+     - material_name
+ - Data/Libs/Tables/item/pickable_item.xml:
+   - element: row
+     attributes:
+     - item_id
+ - Data/Libs/Tables/item/player_item.xml:
+   - element: row
+     attributes:
+     - item_id
+ - Data/Libs/Tables/item/potion.xml:
+   - element: row
+     attributes:
+     - item_id
+ - Data/Libs/Tables/item/questible_item.xml:
+   - element: row
+     attributes:
+     - item_id
+ - Data/Libs/Tables/item/recipe.xml:
+   - element: row
+     attributes:
+     - recipe_id
+ - Data/Libs/Tables/item/recipe_ingredient.xml:
+   - element: row
+     attributes:
+     - item_id
+ - Data/Libs/Tables/item/recipe_step.xml:
+   - element: row
+     attributes:
+     - ui_text
+ - Data/Libs/Tables/item/recipe_substep.xml:
+   - element: row
+     attributes:
+     - recipe_id
+     - recipe_step_id
+     - recipe_substep_id
+ - Data/Libs/Tables/item/weapon.xml:
+   - element: row
+     attributes:
+     - item_id
+ - Data/Libs/Tables/item/weapon2weapon_preset.xml:
+   - element: row
+     attributes:
+     - item_id
+ - Data/Libs/Tables/item/weapon_attachment_slot.xml:
+   - element: row
+     attributes:
+     - weapon_attachment_slot_id
+ - Data/Libs/Tables/item/weapon_class.xml:
+   - element: row
+     attributes:
+     - weapon_class_id
+ - Data/Libs/Tables/item/weapon_equip_slot.xml:
+   - element: row
+     attributes:
+     - weapon_equip_slot_id
+ - Data/Libs/Tables/item/weapon_preset.xml:
+   - element: row
+     attributes:
+     - weapon_preset_id
+ - Data/Libs/Tables/item/weapon_sub_class.xml:
+   - element: row
+     attributes:
+     - weapon_sub_class_id
+ - Data/Libs/Tables/prefab/prefab_phase.xml:
+   - element: row
+     attributes:
+     - order
+     - prefabfullname
+ - Data/Libs/Tables/prefab/prefab_phase_category.xml:
+   - element: row
+     attributes:
+     - prefab_phase_category_id
+ - Data/Libs/Tables/quest/exp_change.xml:
+   - element: row
+     attributes:
+     - exp_change_id
+ - Data/Libs/Tables/quest/money_change.xml:
+   - element: row
+     attributes:
+     - money_change_id
+ - Data/Libs/Tables/quest/quest.xml:
+   - element: row
+     attributes:
+     - quest_id
+ - Data/Libs/Tables/quest/quest2skald_subchapter.xml:
+   - element: row
+     attributes:
+     - quest_id
+     - skald_subchapter_id
+ - Data/Libs/Tables/quest/quest_asset.xml:
+   - element: row
+     attributes:
+     - quest_asset_id
+     - quest_id
+ - Data/Libs/Tables/quest/quest_function.xml:
+   - element: row
+     attributes:
+     - function
+ - Data/Libs/Tables/quest/quest_function_param.xml:
+   - element: row
+     attributes:
+     - objective_function_id
+ - Data/Libs/Tables/quest/quest_item.xml:
+   - element: row
+     attributes:
+     - quest_id
+     - item_id
+ - Data/Libs/Tables/quest/quest_npc.xml:
+   - element: row
+     attributes:
+     - quest_id
+     - soul_id
+ - Data/Libs/Tables/quest/quest_objective.xml:
+   - element: row
+     attributes:
+     - quest_id
+     - objective_id
+ - Data/Libs/Tables/quest/quest_place.xml:
+   - element: row
+     attributes:
+     - entity
+     - quest_id
+ - Data/Libs/Tables/quest/quest_reward_achievement.xml:
+   - element: row
+     attributes:
+     - quest_id
+     - objective_id
+     - statistic_id
+ - Data/Libs/Tables/quest/quest_reward_exp.xml:
+   - element: row
+     attributes:
+     - quest_id
+     - objective_id
+     - rpg_attr
+ - Data/Libs/Tables/quest/quest_reward_item.xml:
+   - element: row
+     attributes:
+     - quest_id
+     - objective_id
+     - item_id
+ - Data/Libs/Tables/quest/quest_reward_money.xml:
+   - element: row
+     attributes:
+     - quest_reward_money_id
+ - Data/Libs/Tables/quest/quest_reward_perk.xml:
+   - element: row
+     attributes:
+     - quest_reward_perk_id
+ - Data/Libs/Tables/quest/quest_reward_reputation.xml:
+   - element: row
+     attributes:
+     - quest_reward_reputation_id
+ - Data/Libs/Tables/quest/quest_reward_script.xml:
+   - element: row
+     attributes:
+     - quest_id
+     - objective_id
+ - Data/Libs/Tables/quest/quest_soul_mortality.xml:
+   - element: row
+     attributes:
+     - quest_id
+     - soul_id
+ - Data/Libs/Tables/quest/quest_statistic.xml:
+   - element: row
+     attributes:
+     - quest_id
+     - statistic_id
+ - Data/Libs/Tables/quest/quest_tracked_asset.xml:
+   - element: row
+     attributes:
+     - quest_id
+     - objective_id
+     - quest_asset_id
+ - Data/Libs/Tables/quest/quest_transition.xml:
+   - element: row
+     attributes:
+     - quest_id
+     - from_objective_id
+     - to_objective_id
+ - Data/Libs/Tables/quest/quest_type.xml:
+   - element: row
+     attributes:
+     - quest_type_id
+ - Data/Libs/Tables/quest/quest_vip_npc.xml:
+   - element: row
+     attributes:
+     - quest_id
+     - quest_npc_id
+ - Data/Libs/Tables/rpg/achievement.xml:
+   - element: row
+     attributes:
+     - achievement_id
+ - Data/Libs/Tables/rpg/achievement_rule.xml:
+   - element: row
+     attributes:
+     - achievement_id
+ - Data/Libs/Tables/rpg/angriness_enum.xml:
+   - element: row
+     attributes:
+     - angriness_enum_id
+ - Data/Libs/Tables/rpg/buff.xml:
+   - element: row
+     attributes:
+     - buff_id
+ - Data/Libs/Tables/rpg/buff_class.xml:
+   - element: row
+     attributes:
+     - buff_class_id
+ - Data/Libs/Tables/rpg/buff_lifetime.xml:
+   - element: row
+     attributes:
+     - buff_lifetime_id
+ - Data/Libs/Tables/rpg/combat_shout_type.xml:
+   - element: row
+     attributes:
+     - combat_shout_type_id
+ - Data/Libs/Tables/rpg/document_required_skill.xml:
+   - element: row
+     attributes:
+     - item_id
+ - Data/Libs/Tables/rpg/document_requirement.xml:
+   - element: row
+     attributes:
+     - item_id
+ - Data/Libs/Tables/rpg/document_reward.xml:
+   - element: row
+     attributes:
+     - item_id
+ - Data/Libs/Tables/rpg/document_reward_perk.xml:
+   - element: row
+     attributes:
+     - item_id
+ - Data/Libs/Tables/rpg/faction.xml:
+   - element: row
+     attributes:
+     - faction_id
+ - Data/Libs/Tables/rpg/game_over.xml:
+   - element: row
+     attributes:
+     - game_over_id
+ - Data/Libs/Tables/rpg/gender.xml:
+   - element: row
+     attributes:
+     - gender_id
+ - Data/Libs/Tables/rpg/hobby.xml:
+   - element: row
+     attributes:
+     - hobby_id
+ - Data/Libs/Tables/rpg/horse_irritation.xml:
+   - element: row
+     attributes:
+     - horse_irritation_id
+ - Data/Libs/Tables/rpg/location.xml:
+   - element: row
+     attributes:
+     - location_id
+ - Data/Libs/Tables/rpg/location2perk.xml:
+   - element: row
+     attributes:
+     - perk_id
+ - Data/Libs/Tables/rpg/location_category.xml:
+   - element: row
+     attributes:
+     - location_category_id
+ - Data/Libs/Tables/rpg/metarole.xml:
+   - element: row
+     attributes:
+     - metarole_id
+ - Data/Libs/Tables/rpg/morale_change.xml:
+   - element: row
+     attributes:
+     - morale_change_id
+ - Data/Libs/Tables/rpg/perk.xml:
+   - element: row
+     attributes:
+     - perk_id
+ - Data/Libs/Tables/rpg/perk2perk_exclusivity.xml:
+   - element: row
+     attributes:
+     - first_perk_id
+     - second_perk_id
+ - Data/Libs/Tables/rpg/perk_buff.xml:
+   - element: row
+     attributes:
+     - buff_id
+ - Data/Libs/Tables/rpg/perk_buff_override.xml:
+   - element: row
+     attributes:
+     - perk_id
+ - Data/Libs/Tables/rpg/perk_codex.xml:
+   - element: row
+     attributes:
+     - perk_id
+ - Data/Libs/Tables/rpg/perk_combo_step.xml:
+   - element: row
+     attributes:
+     - perk_id
+ - Data/Libs/Tables/rpg/perk_companion.xml:
+   - element: row
+     attributes:
+     - perk_id
+ - Data/Libs/Tables/rpg/perk_recipe.xml:
+   - element: row
+     attributes:
+     - perk_id
+ - Data/Libs/Tables/rpg/perk_rpg_param_override.xml:
+   - element: row
+     attributes:
+     - rpg_param_key
+ - Data/Libs/Tables/rpg/perk_script.xml:
+   - element: row
+     attributes:
+     - perk_id
+ - Data/Libs/Tables/rpg/perk_soul_ability.xml:
+   - element: row
+     attributes:
+     - perk_id
+ - Data/Libs/Tables/rpg/perk_special_riposte.xml:
+   - element: row
+     attributes:
+     - perk_id
+ - Data/Libs/Tables/rpg/poi_type.xml:
+   - element: row
+     attributes:
+     - poi_type_id
+ - Data/Libs/Tables/rpg/poi_type2perk.xml:
+   - element: row
+     attributes:
+     - perk_id
+ - Data/Libs/Tables/rpg/race.xml:
+   - element: row
+     attributes:
+     - race_id
+ - Data/Libs/Tables/rpg/reading_spot_type.xml:
+   - element: row
+     attributes:
+     - reading_spot_type_id
+ - Data/Libs/Tables/rpg/reputation_change.xml:
+   - element: row
+     attributes:
+     - reputation_change_id
+ - Data/Libs/Tables/rpg/reputation_condition.xml:
+   - element: row
+     attributes:
+     - reputation_condition_id
+ - Data/Libs/Tables/rpg/rich_presence.xml:
+   - element: row
+     attributes:
+     - rich_presence_id
+ - Data/Libs/Tables/rpg/role.xml:
+   - element: row
+     attributes:
+     - role_id
+ - Data/Libs/Tables/rpg/rpg_movement_type.xml:
+   - element: row
+     attributes:
+     - rpg_movement_type_id
+ - Data/Libs/Tables/rpg/rpg_param.xml:
+   - element: row
+     attributes:
+     - rpg_param_key
+ - Data/Libs/Tables/rpg/rpg_sound.xml:
+   - element: row
+     attributes:
+     - rpg_sound_id
+ - Data/Libs/Tables/rpg/skill.xml:
+   - element: row
+     attributes:
+     - skill_id
+ - Data/Libs/Tables/rpg/skill2item_category.xml:
+   - element: row
+     attributes:
+     - skill_id
+ - Data/Libs/Tables/rpg/skill_check_difficulty.xml:
+   - element: row
+     attributes:
+     - skill_check_difficulty_id
+ - Data/Libs/Tables/rpg/sleeping_spot_type.xml:
+   - element: row
+     attributes:
+     - sleeping_spot_type_id
+ - Data/Libs/Tables/rpg/social_class.xml:
+   - element: row
+     attributes:
+     - social_class_id
+ - Data/Libs/Tables/rpg/soul.xml:
+   - element: row
+     attributes:
+     - soul_id
+ - Data/Libs/Tables/rpg/soul2hobby.xml:
+   - element: row
+     attributes:
+     - soul_id
+ - Data/Libs/Tables/rpg/soul2inventory.xml:
+   - element: row
+     attributes:
+     - soul_id
+ - Data/Libs/Tables/rpg/soul2metarole.xml:
+   - element: row
+     attributes:
+     - soul_id
+ - Data/Libs/Tables/rpg/soul2perk.xml:
+   - element: row
+     attributes:
+     - soul_id
+ - Data/Libs/Tables/rpg/soul2role.xml:
+   - element: row
+     attributes:
+     - soul_id
+ - Data/Libs/Tables/rpg/soul2skill.xml:
+   - element: row
+     attributes:
+     - soul_id
+ - Data/Libs/Tables/rpg/soul_archetype.xml:
+   - element: row
+     attributes:
+     - soul_archetype_id
+ - Data/Libs/Tables/rpg/soul_archetype_movement.xml:
+   - element: row
+     attributes:
+     - soul_archetype_id
+ - Data/Libs/Tables/rpg/soul_class.xml:
+   - element: row
+     attributes:
+     - soul_class_id
+ - Data/Libs/Tables/rpg/soul_slot2health.xml:
+   - element: row
+     attributes:
+     - soul_id
+ - Data/Libs/Tables/rpg/soul_slot2weapon_health.xml:
+   - element: row
+     attributes:
+     - soul_id
+ - Data/Libs/Tables/rpg/sph_group.xml:
+   - element: row
+     attributes:
+     - sph_group_id
+ - Data/Libs/Tables/rpg/sph_highlight.xml:
+   - element: row
+     attributes:
+     - achievement_id
+ - Data/Libs/Tables/rpg/statistic.xml:
+   - element: row
+     attributes:
+     - statistic_id
+ - Data/Libs/Tables/rpg/statistic_group.xml:
+   - element: row
+     attributes:
+     - statistic_group_id
+ - Data/Libs/Tables/rpg/superfaction.xml:
+   - element: row
+     attributes:
+     - superfaction_id
+ - Data/Libs/Tables/rpg/superfaction2superfaction_relationship.xml:
+   - element: row
+     attributes:
+     - from_superfaction_id
+     - to_superfaction_id
+ - Data/Libs/Tables/rpg/v_rich_presence_text.xml:
+   - element: row
+     attributes:
+     - iso_code
+     - string_name
+ - Data/Libs/Tables/rpg/v_soul2role_metarole.xml:
+   - element: row
+     attributes:
+     - soul_id
+ - Data/Libs/Tables/rpg/v_soul_character_data.xml:
+   - element: row
+     attributes:
+     - soul_id
+ - Data/Libs/Tables/rpg/v_sph_texts.xml:
+   - element: row
+     attributes:
+     - achievement_id
+     - ietf_language_tag
+ - Data/Libs/Tables/shop/shop.xml:
+   - element: row
+     attributes:
+     - shop_id
+ - Data/Libs/Tables/shop/shop2item.xml:
+   - element: row
+     attributes:
+     - shop_id
+     - item_id
+ - Data/Libs/Tables/shop/shop_type2item.xml:
+   - element: row
+     attributes:
+     - shop_type_id
+     - item_id
+ - Data/Libs/Tables/shop/shopkeeper.xml:
+   - element: row
+     attributes:
+     - keeper_id
+ - Data/Libs/Tables/skald/skald_objective.xml:
+   - element: row
+     attributes:
+     - skald_element_id
+ - Data/Libs/Tables/skald/skald_objective_string.xml:
+   - element: row
+     attributes:
+     - skald_element_id
+     - string_name
+ - Data/Libs/Tables/skald/skald_objective_string_type.xml:
+   - element: row
+     attributes:
+     - skald_objective_string_type_id
+ - Data/Libs/Tables/skald/skald_quest_string.xml:
+   - element: row
+     attributes:
+     - string_name
+ - Data/Libs/Tables/skald/skald_quest_string_type.xml:
+   - element: row
+     attributes:
+     - skald_quest_string_type_id
+ - Data/Libs/Tables/text/branch.xml:
+   - element: row
+     attributes:
+     - skald_element_id
+ - Data/Libs/Tables/text/dialogue_command_hearing.xml:
+   - element: row
+     attributes:
+     - sequence_line_id
+ - Data/Libs/Tables/text/dialogue_functions.xml:
+   - element: row
+     attributes:
+     - function_name
+ - Data/Libs/Tables/text/dialogue_hearing.xml:
+   - element: row
+     attributes:
+     - dialogue_hearing_id
+ - Data/Libs/Tables/text/dialogue_mood.xml:
+   - element: row
+     attributes:
+     - dialogue_mood_id
+ - Data/Libs/Tables/text/response.xml:
+   - element: row
+     attributes:
+     - sequence_line_id
+ - Data/Libs/Tables/text/sequence.xml:
+   - element: row
+     attributes:
+     - sequence_id
+ - Data/Libs/Tables/text/sequence2quest_objective.xml:
+   - element: row
+     attributes:
+     - sequence_id
+     - quest_id
+     - objective_id
+ - Data/Libs/Tables/text/sequence_flowchart.xml:
+   - element: row
+     attributes:
+     - flowchart_name
+ - Data/Libs/Tables/text/sequence_line.xml:
+   - element: row
+     attributes:
+     - sequence_line_id
+ - Data/Libs/Tables/text/sequence_line_type.xml:
+   - element: row
+     attributes:
+     - sequence_line_type_id
+ - Data/Libs/Tables/text/topic.xml:
+   - element: row
+     attributes:
+     - topic_id
+ - Data/Libs/Tables/text/topic2decision_role.xml:
+   - element: row
+     attributes:
+     - role_id
+     - topic_id
+ - Data/Libs/Tables/text/topic2sequence.xml:
+   - element: row
+     attributes:
+     - sequence_id
+     - topic_id
+ - Data/Libs/Tables/text/topictorole.xml:
+   - element: row
+     attributes:
+     - role_id
+     - topic_id
+ - Data/Libs/Tables/text/v_branch.xml:
+   - element: row
+     attributes:
+     - skald_element_id
+ - Data/Libs/Tables/text/v_dialogue_commands.xml:
+   - element: row
+     attributes:
+     - sequence_line_id
+     - who
+ - Data/Libs/Tables/text/v_response_wave_file_recorded.xml:
+   - element: row
+     attributes:
+     - sequence_line_id
+     - wave_file
+ - Data/Libs/Tables/text/v_topic2subchapter_id.xml:
+   - element: row
+     attributes:
+     - skald_subchapter_id
+     - start_topic
+ - Data/Libs/Tables/text/v_voice_abbreviation.xml:
+   - element: row
+     attributes:
+     - voice_id
+ - Data/Libs/Tables/ui/cf_backer_ingame.xml:
+   - element: row
+     attributes:
+     - cf_backer_id
+ - Data/Libs/Tables/ui/credit_layout.xml:
+   - element: row
+     attributes:
+     - credit_layout_id
+ - Data/Libs/Tables/ui/credit_people.xml:
+   - element: row
+     attributes:
+     - credit_people_id
+ - Data/Libs/Tables/ui/credit_role.xml:
+   - element: row
+     attributes:
+     - credit_role_id
+ - Data/Libs/Tables/ui/credit_role2language.xml:
+   - element: row
+     attributes:
+     - credit_role_id
+     - language_id
+ - Data/Libs/Tables/ui/infotext_category.xml:
+   - element: row
+     attributes:
+     - name
+ - Data/Libs/Tables/ui/skiptime.xml:
+   - element: row
+     attributes:
+     - skiptime_id
+ - Data/Libs/Tables/ui/ui_local_maps.xml:
+   - element: row
+     attributes:
+     - location_id
+ - Data/Libs/Tables/ui/ui_map_label.xml:
+   - element: row
+     attributes:
+     - ui_map_label_id
+ - Data/Libs/Tables/ui/video_language2audio_track.xml:
+   - element: row
+     attributes:
+     - language_id
