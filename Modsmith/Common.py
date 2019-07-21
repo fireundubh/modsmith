@@ -44,7 +44,7 @@ class Common:
             if relpath.startswith(path):
                 return package_map[path]
 
-        raise FileNotFoundError('Cannot find pak by path')
+        raise FileNotFoundError('Cannot find PAK file by path: {}'.format(relpath))
 
     @staticmethod
     @contract(path=str, signatures=list)
@@ -52,7 +52,7 @@ class Common:
         path = Common.fix_slashes(path)
 
         for i, key in enumerate(signatures):
-            signature_key = next(iter(key))
+            signature_key: str = next(iter(key))
 
             if not path.endswith(signature_key):
                 continue
@@ -60,4 +60,4 @@ class Common:
             signature: dict = signatures[i][signature_key][0]
             return signature['element'], signature['attributes']
 
-        raise NotImplementedError('Cannot find signature by path: %s' % path)
+        raise NotImplementedError('Cannot find signature by path: {}'.format(path))
