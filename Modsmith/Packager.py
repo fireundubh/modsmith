@@ -47,7 +47,7 @@ class Packager:
         xml_files: list = []
 
         for folder in folders:
-            files = glob.glob(os.path.join(self.settings.project_localization_path, folder, '*.xml'), recursive=False)
+            files: list = glob.glob(os.path.join(self.settings.project_localization_path, folder, '*.xml'), recursive=False)
 
             if not files:
                 continue
@@ -91,18 +91,21 @@ class Packager:
         # separate non-xml files from xml files
         other_files: set = set(all_files) - set(xml_files)
 
-        Log.info('Patching supported game data...{}{}'.format(os.linesep, self.sep), os.linesep)
+        Log.info('Patching game data...',
+                 prefix=os.linesep, suffix=os.linesep + self.sep)
 
         patcher: Patcher = Patcher(self.settings)
         patcher.patch_data(list(xml_files_supported))
 
-        Log.info('Writing PAK: {}{}{}'.format(self.settings.build_package_path, os.linesep, self.sep), os.linesep)
+        Log.info(f'Writing PAK: "{self.options.relpath(self.settings.build_package_path)}"',
+                 prefix=os.linesep, suffix=os.linesep + self.sep)
 
         with ZipFileFixed(self.settings.build_package_path, 'w', ZIP_STORED) as zip_file:
             for filename, arcname in self._assemble_file_list(xml_files_supported, xml_files_unsupported, other_files):
                 zip_file.write(filename, arcname)
 
-                Log.info('File added to PAK: {} (as {})'.format(filename, arcname))
+                Log.info(f'File added to PAK: "{self.options.relpath(filename)}"')
+                Log.debug(f'arcname="{arcname}"', prefix='\t')
 
     def generate_i18n(self) -> None:
         folder_names: list = os.listdir(self.settings.project_localization_path)
@@ -114,10 +117,12 @@ class Packager:
         except TypeError:
             Log.error('Failed to prepare i18n targets.')
             if len(folder_names) > 0:
-                Log.info('Is your folder structure correct? (e.g., Localization\english_xml\*.xml)', '\t', os.linesep)
+                Log.info('Is your folder structure correct? (e.g., Localization\english_xml\*.xml)',
+                         prefix='\t', suffix=os.linesep)
             raise
 
-        Log.info('Patching supported localization...{}{}'.format(os.linesep, self.sep), os.linesep)
+        Log.info('Patching localization...',
+                 prefix=os.linesep, suffix=os.linesep + self.sep)
 
         patcher: Patcher = Patcher(self.settings)
         patcher.patch_localization(xml_files)
@@ -126,60 +131,71 @@ class Packager:
             build_lang_path: str = os.path.join(self.settings.build_localization_path, folder_name)
 
             if not os.path.exists(build_lang_path):
-                Log.warn('Cannot write PAK. Folder missing: {}'.format(build_lang_path), os.linesep)
+                Log.warn(f'Cannot build PAK. Folder missing: "{build_lang_path}"', prefix=os.linesep)
                 continue
 
             if len(fnmatch.filter(os.listdir(build_lang_path), '*.xml')) == 0:
-                Log.warn('Cannot write PAK. Folder does not contain XML files: {}'.format(build_lang_path), os.linesep)
+                Log.warn(f'Cannot build PAK. Folder empty or does not contain XML files: "{build_lang_path}"', prefix=os.linesep)
                 continue
 
             lang_pak_file_name: str = build_lang_path + self.settings.pak_extension
 
-            Log.info('Writing PAK: {}{}{}'.format(lang_pak_file_name, os.linesep, self.sep), os.linesep)
+            Log.info(f'Writing PAK: "{self.options.relpath(lang_pak_file_name)}"',
+                     prefix=os.linesep, suffix=os.linesep + self.sep)
+
+            if self.options.pack_assets:
+                for filename in xml_files:
+                    file_name: str = os.path.basename(filename)
+
+                    if file_name in self.settings.localization:
+                        continue
+
+                    output_path: str = os.path.join(build_lang_path, file_name)
+
+                    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+                    shutil.copy2(filename, output_path)
+
+                    Log.info(f'File copied for PAK: "{filename}"')
+                    Log.debug(f'output_path="{output_path}"', prefix='\t')
 
             with ZipFileFixed(lang_pak_file_name, mode='w', compression=ZIP_STORED) as zip_file:
-                if self.options.pack_assets:
-                    for xml_file in xml_files:
-                        file_name: str = os.path.basename(xml_file)
+                build_lang_xml_glob: str = os.path.join(build_lang_path, '*.xml')
 
-                        if file_name in self.settings.localization:
-                            continue
+                for filename in glob.glob(build_lang_xml_glob, recursive=False):
+                    arcname: str = os.path.relpath(filename, build_lang_path)
+                    zip_file.write(filename, arcname)
 
-                        output_path: str = os.path.join(build_lang_path, file_name)
-
-                        os.makedirs(os.path.dirname(output_path), exist_ok=True)
-                        shutil.copy2(xml_file, output_path)
-
-                        Log.info('File copied for PAK: {} (as {})'.format(xml_file, output_path))
-
-                for xml_file in glob.glob(os.path.join(build_lang_path, '*.xml'), recursive=False):
-                    arc_name: str = os.path.relpath(xml_file, build_lang_path)
-                    zip_file.write(xml_file, arc_name)
-
-                    Log.info('File added to PAK: {} (as {})'.format(xml_file, arc_name))
+                    Log.info(f'File added to PAK: "{self.options.relpath(filename)}"')
+                    Log.debug(f'arcname="{arcname}"', prefix='\t')
 
     def pack(self) -> str:
         """Writes build assets to ZIP file. Returns output ZIP file path."""
-        Log.info('Writing ZIP:\t{}{}{}'.format(self.settings.build_zip_file_path, os.linesep, self.sep), os.linesep)
+        Log.info(f'Writing ZIP: "{self.options.relpath(self.settings.build_zip_file_path)}"',
+                 prefix=os.linesep, suffix=os.linesep + self.sep)
+
+        build_pak_glob: str = os.path.join(self.settings.build_zip_folder_path, '**\*.pak')
+        project_pak_glob: str = os.path.join(self.settings.project_path, '**\*.pak')
 
         with ZipFileFixed(self.settings.build_zip_file_path, mode='w', compression=ZIP_DEFLATED) as zip_file:
             zip_file.write(self.settings.project_manifest_path, self.settings.zip_manifest_arc_name, compress_type=ZIP_DEFLATED)
 
-            Log.info('File added to ZIP:\t{} (as {})'.format(self.settings.project_manifest_path, self.settings.zip_manifest_arc_name))
+            Log.info(f'File added to ZIP: "{self.options.relpath(self.settings.project_manifest_path)}"')
+            Log.debug(f'arcname="{self.settings.zip_manifest_arc_name}"', prefix='\t')
 
-            build_pak_files: list = glob.glob(os.path.join(self.settings.build_zip_folder_path, '**\*.pak'), recursive=True)
+            build_pak_files: list = glob.glob(build_pak_glob, recursive=True)
 
-            project_pak_files: list = [f for f in glob.glob(os.path.join(self.settings.project_path, '**\*.pak'), recursive=True) if
+            project_pak_files: list = [f for f in glob.glob(project_pak_glob, recursive=True) if
                                        self.settings.project_build_path not in os.path.dirname(f)]
 
-            for file in build_pak_files + project_pak_files:
-                if file in project_pak_files:
-                    arc_name: str = os.path.join(self.settings.zip_name, os.path.relpath(file, self.settings.project_path))
+            for filename in build_pak_files + project_pak_files:
+                if filename in project_pak_files:
+                    arcname: str = os.path.join(self.settings.zip_name, self.options.relpath(filename))
                 else:
-                    arc_name = os.path.relpath(file, self.settings.project_build_path)
+                    arcname = os.path.relpath(filename, self.settings.project_build_path)
 
-                zip_file.write(file, arc_name)
+                zip_file.write(filename, arcname)
 
-                Log.info('File added to ZIP:\t{} (as {})'.format(file, arc_name))
+                Log.info(f'File added to ZIP: "{self.options.relpath(filename)}"')
+                Log.debug(f'arcname="{arcname}"', prefix='\t')
 
         return self.settings.build_zip_file_path

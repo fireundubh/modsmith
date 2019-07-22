@@ -80,10 +80,13 @@ class Patcher:
         Writes out XML to file in the build path.
         """
 
-        for parent_path, xml_file_name, relative_xml_path in Common.setup_xml_files(self.settings.project_data_path, xml_file_list):
+        for xml_file in xml_file_list:
+            relative_xml_path: str = os.path.relpath(xml_file, self.settings.project_data_path)
+
             project_xml_path: str = os.path.join(self.settings.project_data_path, relative_xml_path)
 
-            Log.info('Patching XML file: {} (source: {})'.format(relative_xml_path, project_xml_path))
+            Log.info(f'Patching XML file: "{relative_xml_path}"')
+            Log.debug(f'Source: "{project_xml_path}"', prefix='\t')
 
             pak_file_name: str = Common.get_pak_by_path(project_xml_path, self.settings.project_path, self.settings.packages)
             game_pak_path: str = os.path.join(self.settings.game_path, 'Data', pak_file_name)
@@ -103,13 +106,14 @@ class Patcher:
 
             rows: list = project_xml_tree.xpath(ROW_XPATH)
             if not rows:
-                raise NotImplementedError('Cannot find rows to merge in: {}'.format(project_xml_path))
+                Log.warn(f'No rows found. Cannot merge: "{project_xml_path}"')
+                continue
 
             signatures: tuple = Common.get_signature_by_path(project_xml_path, self.settings.signatures)
 
             self._merge_rows(rows, signatures, output_xml)
 
-            build_xml_file_path: str = os.path.join(self.settings.build_data_path, parent_path, xml_file_name)
+            build_xml_file_path: str = os.path.join(self.settings.build_data_path, relative_xml_path)
 
             tree: etree._ElementTree = etree.ElementTree(output_xml, parser=XML_PARSER)
             tree.write(build_xml_file_path, encoding='utf-8', pretty_print=True, xml_declaration=True)
@@ -119,22 +123,27 @@ class Patcher:
         """
         Constructs XML in memory, seeds with modified rows, and appends unmodified source rows.
 
-        Writes out XML to file in the redistributable path.
+        Writes out XML to file in the build path.
         """
 
         # filter out unsupported xml files - we can arbitrarily add these later but we can't patch them
         xml_file_list = [f for f in xml_file_list if os.path.basename(f) in self.settings.localization]
 
-        for parent_path, file_name, relative_xml_path in Common.setup_xml_files(self.settings.project_localization_path, xml_file_list):
+        for xml_file in xml_file_list:
+            relative_xml_path: str = os.path.relpath(xml_file, self.settings.project_localization_path)
+            parent_path, file_name = os.path.split(relative_xml_path)
+
             project_xml_path: str = os.path.join(self.settings.project_localization_path, relative_xml_path)
 
-            Log.info('Patching XML file: {} (source: {})'.format(relative_xml_path, project_xml_path))
+            Log.info(f'Patching XML file: "{relative_xml_path}"')
+            Log.debug(f'project_xml_path="{project_xml_path}"', prefix='\t')
 
             project_xml_tree: etree._ElementTree = etree.parse(project_xml_path, XML_PARSER)
             rows: list = project_xml_tree.xpath(ROW_XPATH)
 
             if not rows:
-                raise NotImplementedError('Cannot find rows to patch in: {}'.format(project_xml_path))
+                Log.warn(f'No rows found. Cannot patch: "{project_xml_path}"')
+                continue
 
             # create output xml
             output_xml: etree._Element = etree.Element('Table')
@@ -144,12 +153,13 @@ class Patcher:
             zip_path: str = os.path.join(self.settings.game_path, 'Localization', parent_path + '.pak')
 
             if not os.path.exists(zip_path):
-                Log.warn('Cannot patch XML file using archive. File does not exist: {}'.format(zip_path))
+                Log.warn(f'Cannot find game package: "{zip_path}"')
+                Log.warn(f'Skipped patching: "{project_xml_path}"')
                 continue
 
-            with ZipFileFixed(zip_path, mode='r') as data:
-                with data.open(file_name, mode='r') as xml:
-                    lines = xml.read().splitlines()
+            with ZipFileFixed(zip_path, mode='r') as game_data:
+                with game_data.open(file_name, mode='r') as game_xml:
+                    lines = game_xml.read().splitlines()
 
             game_tree: etree._ElementTree = etree.fromstringlist(lines, XML_PARSER)
             game_rows: list = game_tree.xpath(ROW_XPATH)

@@ -18,14 +18,16 @@ class Application:
         self.settings: ProjectSettings = ProjectSettings(self.options)
         self.debug: bool = self.options.debug
 
-    def run(self) -> None:
+    def run(self) -> int:
         if not self.options.config_path:
-            raise FileNotFoundError('Cannot find kingdomcome.yaml')
+            Log.error('Cannot proceed because "kingdomcome.yaml" was not found')
+            return 1
 
         packager = Packager(self.settings)
 
         if not os.path.exists(self.settings.project_manifest_path):
-            raise FileNotFoundError('[ERR] Cannot find required mod.manifest in project root')
+            Log.error('Cannot proceed because "mod.manifest" was not found in project root')
+            return 1
 
         if os.path.exists(self.settings.project_build_path):
             shutil.rmtree(self.settings.project_build_path, ignore_errors=True)
@@ -33,30 +35,44 @@ class Application:
 
         # create pak, if project has game data
         if os.path.exists(self.settings.project_data_path):
-            Log.info('Starting PAK generation...', os.linesep)
+            Log.info('Started building package...',
+                     prefix=os.linesep)
+
             packager.generate_pak()
-            Log.info('PAK generation complete.', os.linesep)
+
+            Log.info('PAK generation completed.',
+                     prefix=os.linesep)
         else:
-            Log.warn('Cannot find Data in project root. Skipping PAK generation.', os.linesep)
+            Log.warn('Cannot find Data in project root. Skipping PAK generation.',
+                     prefix=os.linesep)
 
         # create localization paks, if project has localization
         if os.path.exists(self.settings.project_localization_path):
-            Log.info('Starting i18n generation...', os.linesep)
-            packager.generate_i18n()
-            Log.info('i18n generation complete.', os.linesep)
-        else:
-            Log.warn('Cannot find Localization in project root. Skipping PAK generation.', os.linesep)
+            Log.info('Started building localization...',
+                     prefix=os.linesep)
 
-        # create redistributable
-        if os.path.exists(self.settings.project_build_path):
-            Log.info('Starting ZIP generation...', os.linesep)
-            output_path: str = packager.pack()
-            Log.info('ZIP generation complete. File path: {}'.format(output_path), os.linesep)
+            packager.generate_i18n()
+
+            Log.info('i18n generation completed.',
+                     prefix=os.linesep)
         else:
-            raise NotADirectoryError('[ERR] Cannot package mod because Build directory was not found\n\t'
-                                     'Possible reasons:\n\t\t'
-                                     '1. Project has no Data.\n\t\t'
-                                     '2. Project has no Localization.')
+            Log.warn('Cannot find Localization in project root. Skipping PAK generation.',
+                     prefix=os.linesep)
+
+        # create build
+        if os.path.exists(self.settings.project_build_path):
+            Log.info('Started building ZIP archive...',
+                     prefix=os.linesep)
+
+            output_path: str = packager.pack()
+
+            Log.info(f'ZIP generation completed. File path: "{self.options.relpath(output_path)}"',
+                     prefix=os.linesep)
+        else:
+            Log.error('Cannot generate ZIP because the Build folder was not found')
+            return 1
+
+        return 0
 
 
 if __name__ == '__main__':
@@ -69,7 +85,6 @@ if __name__ == '__main__':
                          help='Path to YAML configuration')
 
     _group1.add_argument('-i', '--project-path',
-                         required=True,
                          action='store', type=str, default='',
                          help='Path to project')
 
