@@ -37,3 +37,6 @@ class ProjectOptions:
                     value = value + '.zip'
 
         super(ProjectOptions, self).__setattr__(key, value)
+
+    def relpath(self, path: str) -> str:
+        return os.path.relpath(path, self.project_path)
