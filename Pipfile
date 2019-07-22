@@ -4,10 +4,10 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+mypy = "==0.720"
 
 [packages]
 lxml = "==4.3.4"
-mypy = "==0.720"
 nuitka = "==0.6.4"
 nuitka-setuptools = "*"
 pyyaml = "==5.1.1"
