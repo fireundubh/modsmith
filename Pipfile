@@ -8,11 +8,8 @@ mypy = "==0.720"
 
 [packages]
 lxml = "==4.3.4"
-nuitka = "==0.6.4"
-nuitka-setuptools = "*"
 pyyaml = "==5.1.1"
 regex = "==2019.06.08"
-pycontracts = "==1.8.12"
 colorama = "==0.4.1"
 
 [requires]

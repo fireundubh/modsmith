@@ -1,17 +1,13 @@
 import copy
 import os
 
-from contracts import contract, disable_all
 from lxml import etree
 
 from Modsmith.Common import Common
-from Modsmith.Constants import PRODUCTION, ROW_XPATH, XML_PARSER
+from Modsmith.Constants import ROW_XPATH, XML_PARSER
 from Modsmith.Extensions import ZipFileFixed
 from Modsmith.ProjectSettings import ProjectSettings
 from Modsmith.SimpleLogger import SimpleLogger as Log
-
-if PRODUCTION:
-    disable_all()
 
 
 # noinspection PyProtectedMember
@@ -20,7 +16,6 @@ class Patcher:
         self.settings: ProjectSettings = settings
 
     @staticmethod
-    @contract(elements=etree._Element)
     def _get_string_keys(elements: etree._Element) -> set:
         results: set = set()
         for element in elements:
@@ -28,7 +23,6 @@ class Patcher:
         return results
 
     @staticmethod
-    @contract(elements=list, signatures=tuple, output_xml=etree._Element)
     def _merge_rows(elements: list, signatures: tuple, output_xml: etree._Element) -> None:
         element_name, element_attributes = signatures
 
@@ -43,7 +37,6 @@ class Patcher:
                 output_xml[0][1].append(element)
 
     @staticmethod
-    @contract(elements=list, signatures=set, output_xml=etree._Element)
     def _merge_string_rows(elements: list, signatures: set, output_xml: etree._Element) -> None:
         for element in elements:
             cells: list = list(element)
@@ -60,7 +53,6 @@ class Patcher:
             output_xml.append(element)
 
     @staticmethod
-    @contract(rows=list, output_xml=etree._Element)
     def _try_clone_text_cells(rows: list, output_xml: etree._Element) -> None:
         """Clones text cell as translation cells if there are only two cells"""
         for row in rows:
@@ -72,7 +64,6 @@ class Patcher:
 
             output_xml.append(row)
 
-    @contract(xml_file_list=list)
     def patch_data(self, xml_file_list: list) -> None:
         """
         Copies source, replaces existing rows with modified rows, and appends assumed new rows that cannot be found in source.
@@ -118,7 +109,6 @@ class Patcher:
             tree: etree._ElementTree = etree.ElementTree(output_xml, parser=XML_PARSER)
             tree.write(build_xml_file_path, encoding='utf-8', pretty_print=True, xml_declaration=True)
 
-    @contract(xml_file_list=list)
     def patch_localization(self, xml_file_list: list) -> None:
         """
         Constructs XML in memory, seeds with modified rows, and appends unmodified source rows.

@@ -2,17 +2,10 @@ import os
 import posixpath
 
 import regex
-from contracts import contract, disable_all
-
-from Modsmith.Constants import PRODUCTION
-
-if PRODUCTION:
-    disable_all()
 
 
 class Common:
     @staticmethod
-    @contract(string=str)
     def fix_slashes(string: str) -> str:
         """Return string with back slashes converted to forward slashes"""
         if '\\' in string:
@@ -20,13 +13,11 @@ class Common:
         return string
 
     @staticmethod
-    @contract(string=str)
     def strip_whitespace(string: str) -> str:
         """Removes whitespace from string"""
         return string if not string or ' ' not in string else regex.sub('\s+', ' ', string).strip()
 
     @staticmethod
-    @contract(xml_path=str, project_path=str, package_map=dict)
     def get_pak_by_path(xml_path: str, project_path: str, package_map: dict) -> str:
         """
         Retrieves game PAK file name with extension from relative path.
@@ -42,7 +33,6 @@ class Common:
         raise FileNotFoundError(f'Cannot find PAK file by path: {relpath}')
 
     @staticmethod
-    @contract(path=str, signatures=list)
     def get_signature_by_path(path: str, signatures: list) -> tuple:
         """
         Retrieves element signature from path.

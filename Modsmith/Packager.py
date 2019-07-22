@@ -7,17 +7,11 @@ from functools import reduce
 from typing import Generator
 from zipfile import ZIP_DEFLATED, ZIP_STORED
 
-from contracts import contract, disable_all
-
-from Modsmith.Constants import PRODUCTION
 from Modsmith.Extensions import ZipFileFixed
 from Modsmith.Patcher import Patcher
 from Modsmith.ProjectOptions import ProjectOptions
 from Modsmith.ProjectSettings import ProjectSettings
 from Modsmith.SimpleLogger import SimpleLogger as Log
-
-if PRODUCTION:
-    disable_all()
 
 
 class Packager:
@@ -26,7 +20,6 @@ class Packager:
         self.options: ProjectOptions = settings.options
         self.sep = '-' * 80
 
-    @contract(files=list)
     def _generate_tbl_files(self, files: list) -> list:
         """Generate empty files with the .tbl extension"""
         results: list = []
@@ -41,7 +34,6 @@ class Packager:
 
         return results
 
-    @contract(folders=list)
     def _prepare_i18n_targets(self, folders: list) -> list:
         """Generates a list i18n XML files, and creates output directories if needed"""
         xml_files: list = []
@@ -58,7 +50,6 @@ class Packager:
 
         return xml_files
 
-    @contract(supported_xml_files=set, unsupported_xml_files=set, non_xml_files=set)
     def _assemble_file_list(self, supported_xml_files: set, unsupported_xml_files: set, non_xml_files: set) -> Generator:
         for supported_file in supported_xml_files:
             arc_name: str = os.path.relpath(supported_file, self.settings.project_data_path)

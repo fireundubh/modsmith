@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "89e40a076941e9c3267ab6f1e6ac3f84bd3d39e62b255839b695d8039bbb9694"
+            "sha256": "7622ac9a787c9a7886d86f326aaf496af964a2dd92e4eff9a6970ad1072ca260"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -23,19 +23,6 @@
             ],
             "index": "pypi",
             "version": "==0.4.1"
-        },
-        "decorator": {
-            "hashes": [
-                "sha256:86156361c50488b84a3f148056ea716ca587df2f0de1d34750d35c21312725de",
-                "sha256:f069f3a01830ca754ba5258fde2278454a0b5b79e0d7f5c13b3b97e57d4acff6"
-            ],
-            "version": "==4.4.0"
-        },
-        "future": {
-            "hashes": [
-                "sha256:67045236dcfd6816dc439556d009594abf643e5eb48992e36beac09c2ca659b8"
-            ],
-            "version": "==0.17.1"
         },
         "lxml": {
             "hashes": [
@@ -66,35 +53,6 @@
             ],
             "index": "pypi",
             "version": "==4.3.4"
-        },
-        "nuitka": {
-            "hashes": [
-                "sha256:71bb8632b1505fabf595f8358e172588837cc065e3d94a29d18cfe9ea0df3740"
-            ],
-            "index": "pypi",
-            "version": "==0.6.4"
-        },
-        "nuitka-setuptools": {
-            "hashes": [
-                "sha256:3344ff0e8e0a5c9e36fd1574bbec19b4f1b97b5852221b08b03b2c3b573593be",
-                "sha256:8dca8848368ba9047df81f9bb23419c75dd20b17ffdbdea6af66c82c49cb2527"
-            ],
-            "index": "pypi",
-            "version": "==2.0"
-        },
-        "pycontracts": {
-            "hashes": [
-                "sha256:e76adbd832deec28b2045a6094c5bb779a0b2cb1105a23b3efafe723e2c9937a"
-            ],
-            "index": "pypi",
-            "version": "==1.8.12"
-        },
-        "pyparsing": {
-            "hashes": [
-                "sha256:530d8bf8cc93a34019d08142593cf4d78a05c890da8cf87ffa3120af53772238",
-                "sha256:f78e99616b6f1a4745c0580e170251ef1bbafc0d0513e270c4bd281bf29d2800"
-            ],
-            "version": "==2.4.1"
         },
         "pyyaml": {
             "hashes": [
@@ -129,20 +87,6 @@
             ],
             "index": "pypi",
             "version": "==2019.6.8"
-        },
-        "setuptools-scm": {
-            "hashes": [
-                "sha256:1f11cb2eea431346d46589c2dafcafe2e7dc1c7b2c70bc4c3752d2048ad5c148",
-                "sha256:bd25e1fb5e4d603dcf490f1fde40fb4c595b357795674c3e5cb7f6217ab39ea5"
-            ],
-            "version": "==3.3.3"
-        },
-        "six": {
-            "hashes": [
-                "sha256:3350809f0555b11f552448330d0b52d5f24c91a322ea4a15ef22629740f3761c",
-                "sha256:d16a0141ec1a18405cd4ce8b4613101da75da0e9a7aec5bdd4fa804d0e0eba73"
-            ],
-            "version": "==1.12.0"
         }
     },
     "develop": {
