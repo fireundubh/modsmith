@@ -1,41 +1,39 @@
 import struct
 
 from zipfile import BadZipFile
+
+# noinspection PyProtectedMember
 from zipfile import ZipExtFile
+
 from zipfile import ZipFile
 from zipfile import ZipInfo
-from zipfile import _FH_EXTRA_FIELD_LENGTH
-from zipfile import _FH_FILENAME_LENGTH
-from zipfile import _FH_SIGNATURE
+
+# noinspection PyProtectedMember
 from zipfile import _SharedFile
-from zipfile import _ZipDecrypter
+
+# noinspection PyProtectedMember
 from zipfile import sizeFileHeader
+
+# noinspection PyProtectedMember
 from zipfile import stringFileHeader
+
+# noinspection PyProtectedMember
 from zipfile import structFileHeader
 
 
 # noinspection Mypy
 class ZipFileFixed(ZipFile):
     def open(self, name: str, mode: str = 'r', pwd: bytes = None, *, force_zip64: bool = False) -> ZipExtFile:
-        if mode not in {'r', 'w'}:
-            raise ValueError('open() requires mode "r" or "w"')
-        if pwd and not isinstance(pwd, bytes):
-            raise TypeError(f'pwd: expected bytes, got {type(pwd).__name__}')
-        if pwd and (mode == 'w'):
-            raise ValueError('pwd is only supported for reading files')
         if not self.fp:
             raise ValueError('Attempt to use ZIP archive that was already closed')
 
-        # Make sure we have an info object
         if isinstance(name, ZipInfo):
-            # 'name' is already an info object
             zinfo = name
         elif mode == 'w':
             zinfo = ZipInfo(name)
             zinfo.compress_type = self.compression
             zinfo._compresslevel = self.compresslevel
         else:
-            # Get info object for name
             zinfo = self.getinfo(name)
 
         if mode == 'w':
@@ -51,52 +49,19 @@ class ZipFileFixed(ZipFile):
         zef_file = _SharedFile(self.fp, zinfo.header_offset,
                                self._fpclose, self._lock, lambda: self._writing)
         try:
-            # Skip the file header:
             fheader = zef_file.read(sizeFileHeader)
             if len(fheader) != sizeFileHeader:
                 raise BadZipFile('Truncated file header')
+
             fheader = struct.unpack(structFileHeader, fheader)
-            if fheader[_FH_SIGNATURE] != stringFileHeader:
+            if fheader[0] != stringFileHeader:
                 raise BadZipFile('Bad magic number for file header')
 
-            # FIX(fireundubh): removed var declaration due to fix making var unused
-            zef_file.read(fheader[_FH_FILENAME_LENGTH])
-            if fheader[_FH_EXTRA_FIELD_LENGTH]:
-                zef_file.read(fheader[_FH_EXTRA_FIELD_LENGTH])
+            zef_file.read(fheader[10])
+            if fheader[11]:
+                zef_file.read(fheader[11])
 
-            if zinfo.flag_bits & 0x20:
-                # Zip 2.7: compressed patched data
-                raise NotImplementedError('compressed patched data (flag bit 5)')
-
-            if zinfo.flag_bits & 0x40:
-                # strong encryption
-                raise NotImplementedError('strong encryption (flag bit 6)')
-
-            # FIX(fireundubh): removed opinionated encoding test that breaks shit
-            # See: https://bugs.python.org/issue6839
-
-            # check for encrypted flag & handle password
-            is_encrypted = zinfo.flag_bits & 0x1
-            zd = None
-            if is_encrypted:
-                if not pwd:
-                    pwd = self.pwd
-                if not pwd:
-                    raise RuntimeError(f'File {name!r} is encrypted, password required for extraction')
-
-                zd = _ZipDecrypter(pwd)
-                header = zef_file.read(12)
-                h = zd(header[0:12])
-                if zinfo.flag_bits & 0x8:
-                    # compare against the file type from extended local headers
-                    check_byte = (zinfo._raw_time >> 8) & 0xff
-                else:
-                    # compare against the CRC otherwise
-                    check_byte = (zinfo.CRC >> 24) & 0xff
-                if h[11] != check_byte:
-                    raise RuntimeError(f'Bad password for file {name!r}')
-
-            return ZipExtFile(zef_file, mode, zinfo, zd, True)
+            return ZipExtFile(zef_file, mode, zinfo, None, True)
         except:
             zef_file.close()
             raise
