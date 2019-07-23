@@ -1,7 +1,7 @@
 import os
 from dataclasses import dataclass, field
 
-import yaml
+from yaml import load, CLoader
 
 from Modsmith.ProjectOptions import ProjectOptions
 from Modsmith.Registry import Registry
@@ -15,15 +15,12 @@ class ProjectSettings:
     project_manifest_path: str = field(init=False, default_factory=lambda: '')
     project_path: str = field(init=False, default_factory=lambda: '')
     project_data_path: str = field(init=False, default_factory=lambda: '')
-    project_localization_path: str = field(init=False, default_factory=lambda: '')
+    project_i18n_path: str = field(init=False, default_factory=lambda: '')
     project_build_path: str = field(init=False, default_factory=lambda: '')
 
-    pak_name: str = field(init=False, default_factory=lambda: '')
     pak_extension: str = field(init=False, default_factory=lambda: '')
 
-    zip_file_name: str = field(init=False, default_factory=lambda: '')
     zip_name: str = field(init=False, default_factory=lambda: '')
-    zip_extension: str = field(init=False, default_factory=lambda: '')
     zip_manifest_arc_name: str = field(init=False, default_factory=lambda: '')
 
     build_data_path: str = field(init=False, default_factory=lambda: '')
@@ -48,22 +45,21 @@ class ProjectSettings:
         self.project_build_path = os.path.join(self.project_path, 'Build')
 
         if not self.options.localization_path:
-            self.project_localization_path = os.path.join(self.project_path, 'Localization')
+            self.project_i18n_path = os.path.join(self.project_path, 'Localization')
         else:
-            self.project_localization_path = self.options.localization_path
+            self.project_i18n_path = self.options.localization_path
 
-        self.pak_name, self.pak_extension = os.path.splitext(self.options.pak_file_name)
+        self.pak_extension = self.options.pak_file_name[-4:]
 
         # ---------------------------------------------------------------------
         # ZIP NAME AND EXTENSION
         # ---------------------------------------------------------------------
-        self.zip_file_name = self.options.zip_file_name
-        self.zip_name, self.zip_extension = os.path.splitext(self.options.zip_file_name)
+        self.zip_name = self.options.zip_file_name[:-4]
 
         # ---------------------------------------------------------------------
         # ZIP PATHS
         # ---------------------------------------------------------------------
-        self.build_zip_file_path = os.path.join(self.project_build_path, self.zip_file_name)
+        self.build_zip_file_path = os.path.join(self.project_build_path, self.options.zip_file_name)
         self.build_zip_folder_path = os.path.join(self.project_build_path, self.zip_name)
 
         self.build_data_path = os.path.join(self.build_zip_folder_path, 'Data')
@@ -77,9 +73,12 @@ class ProjectSettings:
         # DATABASE INITIALIZATION
         # ---------------------------------------------------------------------
         with open(self.options.config_path, mode='r') as f:
-            db = yaml.load(f, Loader=yaml.CLoader)
+            db: dict = load(f, Loader=CLoader)
 
         self.exclusions: list = db['Exclusions']
         self.localization: list = db['Localization']
         self.packages: dict = db['Packages']
         self.signatures: list = db['Signatures']
+
+    def make_project_relative(self, path: str) -> str:
+        return os.path.relpath(path, self.project_path)
