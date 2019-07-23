@@ -17,41 +17,51 @@ from Modsmith.SimpleLogger import SimpleLogger as Log
 
 class Application:
     def __init__(self, args: argparse.Namespace) -> None:
-        self.enable_ansi_colors()
-
         self.options: ProjectOptions = ProjectOptions(args)
         self.settings: ProjectSettings = ProjectSettings(self.options)
         self.debug: bool = self.options.debug
 
     @staticmethod
-    def enable_ansi_colors() -> None:
+    def _try_enable_ansi_colors() -> None:
         colorama.init()
 
         # VT support must be enabled manually for post-AU windows 10 platforms
         # see: https://github.com/Microsoft/WSL/issues/1173#issuecomment-254250445
         if sys.platform == 'win32' and release() == '10':
             if StrictVersion(version()) >= StrictVersion('10.0.14393'):
-                print('hey')
                 kernel32 = windll.kernel32
                 kernel32.SetConsoleMode(kernel32.GetStdHandle(-11), 7)
 
-    def run(self) -> int:
-        if not self.options.config_path:
-            Log.error('Cannot proceed because "kingdomcome.yaml" was not found')
-            return 1
-
-        packager = Packager(self.settings)
-
-        if not os.path.exists(self.settings.project_manifest_path):
-            Log.error('Cannot proceed because "mod.manifest" was not found in project root')
-            return 1
-
+    def _try_reset_build_path(self) -> None:
         if os.path.exists(self.settings.project_build_path):
             shutil.rmtree(self.settings.project_build_path, ignore_errors=True)
             os.makedirs(self.settings.project_build_path, exist_ok=True)
 
+    def run(self) -> int:
+        self._try_enable_ansi_colors()
+
+        config_path = self.options.config_path
+        project_manifest_path = self.settings.project_manifest_path
+        project_build_path = self.settings.project_build_path
+        project_data_path = self.settings.project_data_path
+        project_i18n_path = self.settings.project_i18n_path
+
+        make_project_relative = self.settings.make_project_relative
+
+        if not config_path:
+            Log.error('Cannot proceed because "kingdomcome.yaml" was not found')
+            return 1
+
+        packager: Packager = Packager(self.settings)
+
+        if not os.path.exists(project_manifest_path):
+            Log.error('Cannot proceed because "mod.manifest" was not found in project root')
+            return 1
+
+        self._try_reset_build_path()
+
         # create pak, if project has game data
-        if os.path.exists(self.settings.project_data_path):
+        if os.path.exists(project_data_path):
             Log.info('Started building package...',
                      prefix=os.linesep)
 
@@ -64,7 +74,7 @@ class Application:
                      prefix=os.linesep)
 
         # create localization paks, if project has localization
-        if os.path.exists(self.settings.project_localization_path):
+        if os.path.exists(project_i18n_path):
             Log.info('Started building localization...',
                      prefix=os.linesep)
 
@@ -77,13 +87,13 @@ class Application:
                      prefix=os.linesep)
 
         # create build
-        if os.path.exists(self.settings.project_build_path):
+        if os.path.exists(project_build_path):
             Log.info('Started building ZIP archive...',
                      prefix=os.linesep)
 
             output_path: str = packager.pack()
 
-            Log.info(f'ZIP generation completed. File path: "{self.options.relpath(output_path)}"',
+            Log.info('ZIP generation completed. File path: "%s"' % make_project_relative(output_path),
                      prefix=os.linesep)
         else:
             Log.error('Cannot generate ZIP because the Build folder was not found')
