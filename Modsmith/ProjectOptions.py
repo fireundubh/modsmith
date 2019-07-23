@@ -17,6 +17,13 @@ class ProjectOptions:
     debug: bool = field(init=False, default_factory=lambda: False)
 
     def __post_init__(self) -> None:
+        if not self._args.config_path:
+            cwd: str = os.path.dirname(__file__)
+            self._args.config_path = os.path.join(cwd, 'kingdomcome.yaml')
+
+            if not os.path.exists(self._args.config_path):
+                self._args.config_path = os.path.normpath(os.path.join(cwd, '..', 'kingdomcome.yaml'))
+
         for key in self.__dict__:
             if key == '_args':
                 continue
