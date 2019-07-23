@@ -4,4 +4,6 @@ bin/
 Build/
 example_projects/
 test_data/
+Modsmith.build/
+Modsmith.dist/
 *.pyc
