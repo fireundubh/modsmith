@@ -1,22 +1,39 @@
-# coding=utf-8
-
 import argparse
 import os
 import shutil
+import sys
+from ctypes import windll
+from distutils.version import StrictVersion
+from platform import release, version
 
+import colorama
+
+from Modsmith import __version__
 from Modsmith.Packager import Packager
 from Modsmith.ProjectOptions import ProjectOptions
 from Modsmith.ProjectSettings import ProjectSettings
 from Modsmith.SimpleLogger import SimpleLogger as Log
 
-__version__ = '0.2.0'
-
 
 class Application:
     def __init__(self, args: argparse.Namespace) -> None:
+        self.enable_ansi_colors()
+
         self.options: ProjectOptions = ProjectOptions(args)
         self.settings: ProjectSettings = ProjectSettings(self.options)
         self.debug: bool = self.options.debug
+
+    @staticmethod
+    def enable_ansi_colors() -> None:
+        colorama.init()
+
+        # VT support must be enabled manually for post-AU windows 10 platforms
+        # see: https://github.com/Microsoft/WSL/issues/1173#issuecomment-254250445
+        if sys.platform == 'win32' and release() == '10':
+            if StrictVersion(version()) >= StrictVersion('10.0.14393'):
+                print('hey')
+                kernel32 = windll.kernel32
+                kernel32.SetConsoleMode(kernel32.GetStdHandle(-11), 7)
 
     def run(self) -> int:
         if not self.options.config_path:
@@ -81,7 +98,7 @@ if __name__ == '__main__':
     _group1 = _parser.add_argument_group('path arguments')
 
     _group1.add_argument('-c', '--config-path',
-                         action='store', type=str, default=os.path.join(os.path.dirname(__file__), 'kingdomcome.yaml'),
+                         action='store', type=str, default='',
                          help='Path to YAML configuration')
 
     _group1.add_argument('-i', '--project-path',
