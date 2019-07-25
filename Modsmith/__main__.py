@@ -105,37 +105,24 @@ class Application:
 if __name__ == '__main__':
     _parser = argparse.ArgumentParser(description='Modsmith v%s by fireundubh' % __version__)
 
+    _parser.add_argument('manifest_path',
+                         metavar='MANIFEST_PATH', nargs=1,
+                         action='store', type=str,
+                         help='Path to mod.manifest in project root')
+
     _group1 = _parser.add_argument_group('path arguments')
 
-    _group1.add_argument('-c', '--config-path',
+    _group1.add_argument('--config-path',
                          action='store', type=str, default='',
                          help='Path to YAML configuration')
 
-    _group1.add_argument('-i', '--project-path',
-                         action='store', type=str, default='',
-                         help='Path to project')
+    _group2 = _parser.add_argument_group('miscellaneous arguments')
 
-    _group1.add_argument('-l', '--localization-path',
-                         action='store', type=str, default='',
-                         help='Path to localization')
-
-    _group2 = _parser.add_argument_group('file arguments')
-
-    _group2.add_argument('-o', '--pak-file-name',
-                         action='store', type=str, default='',
-                         help='Target PAK file name')
-
-    _group2.add_argument('-z', '--zip-file-name',
-                         action='store', type=str, default='',
-                         help='Target ZIP file name')
-
-    _group3 = _parser.add_argument_group('miscellaneous arguments')
-
-    _group3.add_argument('--pack-assets',
+    _group2.add_argument('--pack-assets',
                          action='store_true', default=False,
                          help='Pack all assets')
 
-    _group3.add_argument('--debug',
+    _group2.add_argument('--debug',
                          action='store_true', default=False,
                          help='Enable logging tracebacks')
 
