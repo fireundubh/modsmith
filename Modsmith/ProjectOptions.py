@@ -13,6 +13,7 @@ class ProjectOptions:
     _args: Namespace = field(repr=False, default_factory=Namespace)
 
     manifest_path: str = field(init=False, default_factory=lambda: '')
+
     config_path: str = field(init=False, default_factory=lambda: '')
     project_path: str = field(init=False, default_factory=lambda: '')
     localization_path: str = field(init=False, default_factory=lambda: '')
@@ -23,31 +24,20 @@ class ProjectOptions:
     debug: bool = field(init=False, default_factory=lambda: False)
 
     def __post_init__(self) -> None:
-        if not self._args.config_path:
-            cwd: str = os.path.dirname(__file__)
-            self._args.config_path = os.path.join(cwd, 'kingdomcome.yaml')
+        cwd: str = os.path.dirname(__file__)
 
-            if not os.path.exists(self._args.config_path):
-                self._args.config_path = os.path.normpath(os.path.join(cwd, '..', 'kingdomcome.yaml'))
+        self.config_path = os.path.join(cwd, 'kingdomcome.yaml')
+        if not os.path.exists(self.config_path):
+            self.config_path = os.path.normpath(os.path.join(cwd, '..', 'kingdomcome.yaml'))
 
-        for key in self.__dict__:
-            if key in ('_args', 'project_path', 'localization_path', 'pak_file_name', 'zip_file_name'):
-                continue
-            user_value = getattr(self._args, key)
-            if user_value != getattr(self, key):
-                setattr(self, key, user_value)
-
+        self.manifest_path = self._args.manifest_path
         if not os.path.exists(self.manifest_path):
             return
 
         self.project_path = os.path.dirname(self.manifest_path)
         self.localization_path = os.path.join(self.project_path, 'Localization')
 
-        try:
-            tree: etree.ElementTree = etree.parse(self.manifest_path, parser=XML_PARSER)
-        except etree.XMLSyntaxError as e:
-            raise
-
+        tree: etree.ElementTree = etree.parse(self.manifest_path, parser=XML_PARSER)
         name_element, version_element = tree.xpath('//name'), tree.xpath('//version')
 
         project_name: str = name_element[0].text if name_element else os.path.basename(self.project_path)
@@ -61,7 +51,7 @@ class ProjectOptions:
             self.zip_file_name = '{}-v{}'.format(project_name.replace(' ', '_'), version_string.replace('.', '-'))
 
     def __setattr__(self, key: str, value: str) -> None:
-        if value != '' and key not in ('_args', 'pack_assets', 'debug'):
+        if value != '' and key in ('manifest_path', 'config_path', 'pak_file_name', 'zip_file_name'):
             if key in ('manifest_path', 'config_path'):
                 if isinstance(value, list):
                     value = value[0]

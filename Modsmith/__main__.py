@@ -9,6 +9,7 @@ from platform import release, version
 import colorama
 
 from Modsmith import __version__
+from Modsmith.Extensions import HelpFormatterEx
 from Modsmith.Packager import Packager
 from Modsmith.ProjectOptions import ProjectOptions
 from Modsmith.ProjectSettings import ProjectSettings
@@ -103,27 +104,20 @@ class Application:
 
 
 if __name__ == '__main__':
-    _parser = argparse.ArgumentParser(description='Modsmith v%s by fireundubh' % __version__)
+    _parser = argparse.ArgumentParser(description='Modsmith v%s by fireundubh' % __version__,
+                                      formatter_class=HelpFormatterEx)
 
     _parser.add_argument('manifest_path',
-                         metavar='MANIFEST_PATH', nargs=1,
+                         metavar='<path>', nargs=1,
                          action='store', type=str,
-                         help='Path to mod.manifest in project root')
+                         help='path to mod.manifest in project root (type: str)')
 
-    _group1 = _parser.add_argument_group('path arguments')
-
-    _group1.add_argument('--config-path',
-                         action='store', type=str, default='',
-                         help='Path to YAML configuration')
-
-    _group2 = _parser.add_argument_group('miscellaneous arguments')
-
-    _group2.add_argument('--pack-assets',
+    _parser.add_argument('--pack-assets',
                          action='store_true', default=False,
-                         help='Pack all assets')
+                         help='add unsupported assets to package')
 
-    _group2.add_argument('--debug',
+    _parser.add_argument('--debug',
                          action='store_true', default=False,
-                         help='Enable logging tracebacks')
+                         help='enable debug logging')
 
     Application(_parser.parse_args()).run()
