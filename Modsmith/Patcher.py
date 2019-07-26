@@ -6,7 +6,7 @@ from functools import partial
 from lxml import etree
 
 from Modsmith.Common import Common
-from Modsmith.Constants import ROW_XPATH, XML_PARSER
+from Modsmith.Constants import PRECOMPILED_XPATH_CELL, PRECOMPILED_XPATH_ROW, XML_PARSER
 from Modsmith.Extensions import ZipFileFixed
 from Modsmith.ProjectSettings import ProjectSettings
 from Modsmith.SimpleLogger import SimpleLogger as Log
@@ -39,6 +39,7 @@ class Patcher:
             for output_row in output_rows:
                 output_xml[0][1].remove(output_row)
                 output_xml[0][1].append(element)
+                Log.debug('Replaced element: //%s[%s]' % (element_name, attributes_xpath), prefix='\t')
             else:
                 output_xml[0][1].append(element)
 
@@ -145,7 +146,7 @@ class Patcher:
             # merge rows based on signature lookup
             project_xml_tree: etree._ElementTree = etree.parse(project_xml_path, XML_PARSER)
 
-            rows: list = project_xml_tree.xpath(ROW_XPATH)
+            rows: list = PRECOMPILED_XPATH_ROW.evaluate(project_xml_tree)
             if not rows:
                 Log.warn(f'No rows found. Cannot merge: "{project_xml_path}"')
                 continue
@@ -192,7 +193,7 @@ class Patcher:
             Log.debug(f'project_xml_path="{project_xml_path}"', prefix='\t')
 
             project_xml_tree: etree._ElementTree = etree.parse(project_xml_path, XML_PARSER)
-            rows: list = project_xml_tree.xpath(ROW_XPATH)
+            rows: list = PRECOMPILED_XPATH_ROW.evaluate(project_xml_tree)
 
             if not rows:
                 Log.warn(f'No rows found. Cannot patch: "{project_xml_path}"')
@@ -220,7 +221,7 @@ class Patcher:
                 lines: list = game_xml.read().splitlines()
 
             game_tree: etree._ElementTree = etree.fromstringlist(lines, XML_PARSER)
-            game_rows: list = game_tree.xpath(ROW_XPATH)
+            game_rows: list = PRECOMPILED_XPATH_ROW.evaluate(game_tree)
 
             # create row data for comparing keys
             signatures: set = self._get_string_keys(output_xml)
@@ -228,8 +229,8 @@ class Patcher:
             self._merge_string_rows(game_rows, signatures, output_xml)
 
             # sort output xml by key
-            output_rows: list = output_xml.xpath(ROW_XPATH)
-            output_xml[:] = sorted(output_rows, key=lambda r: r.xpath('Cell/text()'))
+            output_rows: list = PRECOMPILED_XPATH_ROW.evaluate(output_xml)
+            output_xml[:] = sorted(output_rows, key=PRECOMPILED_XPATH_CELL.evaluate)
 
             with open(build_xml_path, mode='w', encoding='utf-8'):
                 et: etree._ElementTree = etree.ElementTree(output_xml, parser=XML_PARSER)
