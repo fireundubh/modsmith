@@ -62,9 +62,7 @@ class Patcher:
                 if not cell_text:
                     continue
 
-                if ' ' not in cell_text:
-                    cells[i].text = cell_text
-                else:
+                if ' ' in cell_text:
                     cells[i].text = self.remove_whitespace(string=cell_text).strip()
 
             output_xml.append(element)
