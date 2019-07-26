@@ -6,7 +6,7 @@ from functools import partial
 from lxml import etree
 
 from Modsmith.Common import Common
-from Modsmith.Constants import PRECOMPILED_XPATH_CELL, PRECOMPILED_XPATH_ROW, XML_PARSER
+from Modsmith.Constants import PRECOMPILED_XPATH_CELL, PRECOMPILED_XPATH_ROW, PRECOMPILED_XPATH_ROWS, XML_PARSER
 from Modsmith.Extensions import ZipFileFixed
 from Modsmith.ProjectSettings import ProjectSettings
 from Modsmith.SimpleLogger import SimpleLogger as Log
@@ -32,16 +32,21 @@ class Patcher:
 
         xpath: etree.XPathEvaluator = etree.XPathEvaluator(output_xml)
 
+        rows: etree._Element = PRECOMPILED_XPATH_ROWS.evaluate(output_xml)[0]
+
         for element in elements:
             attributes_xpath: str = ' and '.join([f'@{key}="{element.get(key)}"' for key in sorted(element_attributes)])
             output_rows: list = xpath.evaluate('//%s[%s]' % (element_name, attributes_xpath))
 
-            for output_row in output_rows:
-                output_xml[0][1].remove(output_row)
-                output_xml[0][1].append(element)
-                Log.debug('Replaced element: //%s[%s]' % (element_name, attributes_xpath), prefix='\t')
+            if output_rows:
+                Log.debug('Replacing element: //%s[%s]' % (element_name, attributes_xpath), prefix='\t')
+
+                for output_row in output_rows:
+                    rows.remove(output_row)
+                    rows.append(element)
             else:
-                output_xml[0][1].append(element)
+                Log.debug('Merging element: //%s[%s]' % (element_name, attributes_xpath), prefix='\t')
+                rows.append(element)
 
     def _merge_string_rows(self, elements: list, signatures: set, output_xml: etree._Element) -> None:
         for element in elements:
