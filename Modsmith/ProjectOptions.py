@@ -46,9 +46,9 @@ class ProjectOptions:
         self.pak_file_name = project_name
 
         if not version_string:
-            self.zip_file_name = project_name
+            self.zip_file_name = project_name.replace(' ', '_')
         else:
-            self.zip_file_name = '{}-v{}'.format(project_name.replace(' ', '_'), version_string.replace('.', '-'))
+            self.zip_file_name = '{}_v{}'.format(project_name.replace(' ', '_'), version_string.replace('.', '-'))
 
     def __setattr__(self, key: str, value: str) -> None:
         if value != '' and key in ('manifest_path', 'config_path', 'pak_file_name', 'zip_file_name'):
