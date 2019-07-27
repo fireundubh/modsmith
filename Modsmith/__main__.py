@@ -28,6 +28,9 @@ class Application:
 
         # VT support must be enabled manually for post-AU windows 10 platforms
         # see: https://github.com/Microsoft/WSL/issues/1173#issuecomment-254250445
+        if os.environ.get('MODSMITH_DEBUG', False):
+            return
+
         if sys.platform == 'win32' and release() == '10':
             if StrictVersion(version()) >= StrictVersion('10.0.14393'):
                 kernel32 = windll.kernel32

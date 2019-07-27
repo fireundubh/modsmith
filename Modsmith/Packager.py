@@ -124,6 +124,8 @@ class Packager:
         Log.info('Writing PAK: "%s"' % make_project_relative(build_package_path),
                  prefix=os.linesep, suffix=os.linesep + self.sep)
 
+        os.makedirs(os.path.dirname(build_package_path), exist_ok=True)
+
         with ZipFileFixed(build_package_path, 'w', ZIP_STORED) as zip_file:
             for filename, arcname in self._generate_file_list(xml_files_supported, xml_files_unsupported, other_files):
                 zip_file.write(filename, arcname)
@@ -179,6 +181,8 @@ class Packager:
             if self.options.pack_assets:
                 self._copy_assets_to_build_path(xml_files, build_lang_path, localization)
 
+            os.makedirs(os.path.dirname(lang_pak_file_name), exist_ok=True)
+
             with ZipFileFixed(lang_pak_file_name, mode='w', compression=ZIP_STORED) as zip_file:
                 for filename in glob.glob(glob_build_lang_xml, recursive=False):
                     arcname: str = os.path.relpath(filename, build_lang_path)
@@ -193,13 +197,15 @@ class Packager:
         project_manifest_path: str = self.settings.project_manifest_path
         project_build_path: str = self.settings.project_build_path
         build_zip_file_path: str = self.settings.build_zip_file_path
-        zip_name: str = self.settings.zip_name
+        pak_name: str = self.settings.pak_file_name
         zip_manifest_arc_name: str = self.settings.zip_manifest_arc_name
 
         make_project_relative = self.settings.make_project_relative
 
         Log.info('Writing ZIP: "%s"' % make_project_relative(build_zip_file_path),
                  prefix=os.linesep, suffix=os.linesep + self.sep)
+
+        os.makedirs(os.path.dirname(build_zip_file_path), exist_ok=True)
 
         with ZipFileFixed(build_zip_file_path, mode='w', compression=ZIP_DEFLATED) as zip_file:
             zip_file.write(project_manifest_path, zip_manifest_arc_name, compress_type=ZIP_DEFLATED)
@@ -214,7 +220,7 @@ class Packager:
 
             for filename in build_pak_files + project_pak_files:
                 if filename in project_pak_files:
-                    arcname: str = os.path.join(zip_name, make_project_relative(filename))
+                    arcname: str = os.path.join(pak_name, make_project_relative(filename))
                 else:
                     arcname = os.path.relpath(filename, project_build_path)
 

@@ -5,4 +5,4 @@ from Modsmith.ProjectOptions import ProjectOptions
 from Modsmith.SimpleLogger import SimpleLogger
 from Modsmith.Common import Common
 
-__version__ = '0.2.0'
+__version__ = '0.2.1'
