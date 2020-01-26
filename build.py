@@ -61,9 +61,9 @@ class Application:
 
         files: list = [f for f in glob(os.path.join(path, '**\*'), recursive=True) if os.path.isfile(f)]
 
-        with zipfile.ZipFile(zip_path, 'w', compression=zipfile.ZIP_LZMA) as z:
+        with zipfile.ZipFile(zip_path, 'w', compression=zipfile.ZIP_DEFLATED) as z:
             for f in files:
-                z.write(f, os.path.relpath(f, path), compress_type=zipfile.ZIP_LZMA)
+                z.write(f, os.path.relpath(f, path), compress_type=zipfile.ZIP_DEFLATED)
                 print('Added file to archive: %s' % f)
 
         return zip_path
