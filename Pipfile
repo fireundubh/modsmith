@@ -4,13 +4,14 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-mypy = "==0.720"
+mypy = "*"
+nuitka = "*"
 
 [packages]
-lxml = "==4.3.4"
-pyyaml = "==5.1.1"
-regex = "==2019.06.08"
-colorama = "==0.4.1"
+lxml = "*"
+pyyaml = "*"
+regex = "*"
+colorama = "*"
 
 [requires]
-python_version = "3.7"
+python_version = "3.8.1"
