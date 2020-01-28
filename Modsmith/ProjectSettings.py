@@ -1,10 +1,12 @@
 import os
-from dataclasses import dataclass, field
+from dataclasses import (dataclass,
+                         field)
 
-from yaml import load, CLoader
+from yaml import (CLoader,
+                  load)
 
-from Modsmith.ProjectOptions import ProjectOptions
-from Modsmith.Registry import Registry
+from modsmith import (ProjectOptions,
+                      Registry)
 
 
 @dataclass

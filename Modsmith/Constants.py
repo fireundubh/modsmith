@@ -1,9 +1,22 @@
 from lxml import etree
 
-XML_PARSER = etree.XMLParser(encoding='utf-8', remove_blank_text=True, strip_cdata=False)
+SHARED_PARSER_OPTIONS = {
+    'encoding'         : 'utf-8',
+    'remove_blank_text': True,
+    'strip_cdata'      : True
+}
 
-PRECOMPILED_XPATH_CELL = etree.XPath('Cell/text()')
+XML_PARSER \
+    = etree.XMLParser(**SHARED_PARSER_OPTIONS, remove_comments=True)
 
-PRECOMPILED_XPATH_ROW = etree.XPath('//*[translate(local-name(), "Row", "row")="row"]')
+XML_PARSER_ALLOW_COMMENTS \
+    = etree.XMLParser(**SHARED_PARSER_OPTIONS, remove_comments=False)
 
-PRECOMPILED_XPATH_ROWS = etree.XPath('//*[translate(local-name(), "Rows", "rows")="rows"]')
+PRECOMPILED_XPATH_CELL \
+    = etree.XPath('Cell/text()')
+
+PRECOMPILED_XPATH_ROW \
+    = etree.XPath('//*[translate(local-name(), "Row", "row")="row"]')
+
+PRECOMPILED_XPATH_ROWS \
+    = etree.XPath('//*[translate(local-name(), "Rows", "rows")="rows"]')

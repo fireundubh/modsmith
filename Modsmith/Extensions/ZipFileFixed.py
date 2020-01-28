@@ -1,24 +1,13 @@
 import struct
 
-from zipfile import BadZipFile
-
-# noinspection PyProtectedMember
-from zipfile import ZipExtFile
-
-from zipfile import ZipFile
-from zipfile import ZipInfo
-
-# noinspection PyProtectedMember
-from zipfile import _SharedFile
-
-# noinspection PyProtectedMember
-from zipfile import sizeFileHeader
-
-# noinspection PyProtectedMember
-from zipfile import stringFileHeader
-
-# noinspection PyProtectedMember
-from zipfile import structFileHeader
+from zipfile import (BadZipFile,
+                     ZipExtFile,
+                     ZipFile,
+                     ZipInfo,
+                     _SharedFile,
+                     sizeFileHeader,
+                     stringFileHeader,
+                     structFileHeader)
 
 
 # noinspection Mypy

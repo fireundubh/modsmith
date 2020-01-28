@@ -1,6 +1,14 @@
 import os
-from dataclasses import dataclass, field
-from winreg import EnumValue, HKEYType, HKEY_LOCAL_MACHINE, KEY_READ, OpenKey, QueryInfoKey
+
+from dataclasses import (dataclass,
+                         field)
+
+from winreg import (EnumValue,
+                    HKEYType,
+                    HKEY_LOCAL_MACHINE,
+                    KEY_READ,
+                    OpenKey,
+                    QueryInfoKey)
 
 
 @dataclass

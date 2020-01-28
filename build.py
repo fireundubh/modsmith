@@ -6,8 +6,6 @@ import sys
 import zipfile
 from glob import glob
 
-from Modsmith import __version__ as version
-
 
 class Application:
     def __init__(self, args: argparse.Namespace) -> None:
@@ -16,7 +14,7 @@ class Application:
         if os.path.exists(args.nuitka_path):
             self.nuitka_path = args.nuitka_path
         else:
-            raise FileNotFoundError(args.nuitka_path + ' does not exist')
+            raise FileNotFoundError(args.nuitka_path)
 
         self.package_name = args.package_name
 
@@ -34,7 +32,7 @@ class Application:
         if not os.path.exists(path):
             return
 
-        files: list = [f for f in glob(os.path.join(path, '**\*'), recursive=True)
+        files: list = [f for f in glob(os.path.join(path, r'**\*'), recursive=True)
                        if os.path.isfile(f) and not f.endswith(files_to_keep)]
 
         for f in files:
@@ -53,25 +51,25 @@ class Application:
         dst: str = os.path.join(path, os.path.basename(src))
         if not os.path.exists(dst):
             return shutil.copy2(src, dst)
-        raise FileNotFoundError('Cannot find destination file: %s' % dst)
+        raise FileNotFoundError(f'Cannot find destination file: {dst}')
 
     def _build_zip_archive(self, path: str) -> str:
-        zip_file: str = '%s v%s.zip' % (self.package_name, version.replace('.', '_'))
+        zip_file: str = f'{self.package_name}.zip'
         zip_path: str = os.path.join(self.cwd, 'bin', zip_file)
 
-        files: list = [f for f in glob(os.path.join(path, '**\*'), recursive=True) if os.path.isfile(f)]
+        files: list = [f for f in glob(os.path.join(path, r'**\*'), recursive=True) if os.path.isfile(f)]
 
         with zipfile.ZipFile(zip_path, 'w', compression=zipfile.ZIP_DEFLATED) as z:
             for f in files:
                 z.write(f, os.path.relpath(f, path), compress_type=zipfile.ZIP_DEFLATED)
-                print('Added file to archive: %s' % f)
+                print(f'Added file to archive: {f}')
 
         return zip_path
 
     def run(self) -> int:
         package_path: str = os.path.join(self.cwd, self.package_name)
 
-        dist_folder: str = os.path.join(self.cwd, '%s.dist' % self.package_name)
+        dist_folder: str = os.path.join(self.cwd, f'{self.package_name}.dist')
         if os.path.exists(dist_folder):
             shutil.rmtree(dist_folder, ignore_errors=True)
 
@@ -100,11 +98,11 @@ class Application:
         self._clean_dist_folder(dist_folder)
 
         file_copied: str = self._copy_yaml_to_dist_folder(dist_folder)
-        print('Copied file to dist folder: %s' % file_copied)
+        print(f'Copied file to dist folder: {file_copied}')
 
         print('Building archive...')
         zip_created: str = self._build_zip_archive(dist_folder)
-        print('Wrote archive: %s' % zip_created)
+        print(f'Wrote archive: {zip_created}')
 
         return 0
 
