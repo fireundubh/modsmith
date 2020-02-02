@@ -87,7 +87,8 @@ class Patcher:
                 # open game pak and store object in memory
                 game_pak_path = os.path.join(self.settings.game_path, 'Data', game_pak_filename)
                 game_paks.update({
-                    game_pak_filename: ZipFileFixed(game_pak_path, 'r')})
+                    game_pak_filename: ZipFileFixed(game_pak_path, 'r')
+                })
 
             with game_paks[game_pak_filename].open(game_pak_arcname, 'r') as game_xml:
                 game_xml_tree = etree.parse(game_xml, XML_PARSER)
@@ -147,9 +148,7 @@ class Patcher:
             target_folder = os.path.dirname(build_xml_file_path)
             os.makedirs(target_folder, exist_ok=True)
 
-            output_database = self.find_root(project_rows[0], 'database')
-
-            output_tree: etree.ElementTree = etree.ElementTree(output_database, parser=XML_PARSER_ALLOW_COMMENTS)
+            output_tree: etree.ElementTree = etree.ElementTree(project_xml_tree.getroot(), parser=XML_PARSER_ALLOW_COMMENTS)
             output_tree.write(build_xml_file_path, encoding='utf-8', pretty_print=True, xml_declaration=True)
 
         # close game paks open in memory
