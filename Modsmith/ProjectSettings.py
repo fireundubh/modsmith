@@ -47,7 +47,7 @@ class ProjectSettings:
         self.project_build_path = os.path.join(self.project_path, 'Build')
         self.project_i18n_path = self.options.localization_path
 
-        self.pak_file_name = self.options.pak_file_name[:-4]
+        self.pak_file_name = self.options.pak_file_name[:-4].replace(' ', '_')
         self.pak_extension = self.options.pak_file_name[-4:]
 
         # ---------------------------------------------------------------------
@@ -64,7 +64,7 @@ class ProjectSettings:
         self.build_data_path = os.path.join(self.build_zip_folder_path, 'Data')
         self.build_localization_path = os.path.join(self.build_zip_folder_path, 'Localization')
 
-        self.build_package_path = os.path.join(self.build_data_path, self.options.pak_file_name)
+        self.build_package_path = os.path.join(self.build_data_path, self.pak_file_name + self.pak_extension)
 
         self.zip_manifest_arc_name = os.path.join(self.pak_file_name, 'mod.manifest')
 
