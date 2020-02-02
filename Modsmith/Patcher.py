@@ -1,105 +1,37 @@
 import copy
 import os
-import re
-from functools import partial
+from decimal import Decimal
 
 from lxml import etree
 
-from Modsmith.Common import Common
-from Modsmith.Constants import PRECOMPILED_XPATH_CELL, PRECOMPILED_XPATH_ROW, PRECOMPILED_XPATH_ROWS, XML_PARSER
-from Modsmith.Extensions import ZipFileFixed
-from Modsmith.ProjectSettings import ProjectSettings
-from Modsmith.SimpleLogger import SimpleLogger as Log
+from modsmith import (PRECOMPILED_XPATH_ROW,
+                      ProjectSettings,
+                      SimpleLogger as Log,
+                      XML_PARSER,
+                      XML_PARSER_ALLOW_COMMENTS,
+                      ZipFileFixed,
+                      fix_slashes)
 
 
-# noinspection PyProtectedMember
 class Patcher:
     def __init__(self, settings: ProjectSettings) -> None:
-        self.settings: ProjectSettings = settings
-        self.whitespace = re.compile('\s{2,}')
-        self.remove_whitespace = partial(self.whitespace.sub, repl=' ')
+        self.settings = settings
+        self.sanitized_mod_name = self.settings.pak_file_name.lower().replace(' ', '_')
 
-    @staticmethod
-    def _get_string_keys(elements: etree._Element) -> set:
-        results: set = set()
-        for element in elements:
-            results.add(list(element)[0].text)
-        return results
+    def _get_game_pak_by_absolute_xml_path(self, xml_path: str) -> str:
+        if os.path.isabs(xml_path):
+            xml_path = os.path.relpath(xml_path, self.settings.project_path)
 
-    @staticmethod
-    def _merge_rows(elements: list, signatures: tuple, output_xml: etree._Element) -> None:
-        element_name, element_attributes = signatures
-
-        xpath: etree.XPathEvaluator = etree.XPathEvaluator(output_xml)
-
-        rows: etree._Element = PRECOMPILED_XPATH_ROWS.evaluate(output_xml)[0]
-
-        for element in elements:
-            attributes_xpath: str = ' and '.join([f'@{key}="{element.get(key)}"' for key in sorted(element_attributes)])
-            output_rows: list = xpath.evaluate('//%s[%s]' % (element_name, attributes_xpath))
-
-            if output_rows:
-                Log.debug('Replacing element: //%s[%s]' % (element_name, attributes_xpath), prefix='\t')
-
-                for output_row in output_rows:
-                    rows.remove(output_row)
-                    rows.append(element)
-            else:
-                Log.debug('Merging element: //%s[%s]' % (element_name, attributes_xpath), prefix='\t')
-                rows.append(element)
-
-    def _merge_string_rows(self, elements: list, signatures: set, output_xml: etree._Element) -> None:
-        for element in elements:
-            cells: list = list(element)
-
-            if cells[0].text in signatures:
-                continue
-
-            # we've already added our strings, let's clean them up
-            for i in range(0, len(cells)):
-                cell_text: str = cells[i].text
-
-                if not cell_text:
-                    continue
-
-                if ' ' in cell_text:
-                    cells[i].text = self.remove_whitespace(string=cell_text).strip()
-
-            output_xml.append(element)
-
-    @staticmethod
-    def _try_clone_text_cells(rows: list, output_xml: etree._Element) -> None:
-        """Clones text cell as translation cells if there are only two cells"""
-        for row in rows:
-            cells: list = list(row)
-
-            if len(cells) == 2:
-                original_text_clone: str = copy.deepcopy(cells[1])
-                row.append(original_text_clone)
-
-            output_xml.append(row)
-
-    def _get_pak_by_path(self, xml_path: str) -> str:
-        """
-        Retrieves game PAK file name with extension from relative path.
-
-        Raises FileNotFoundError if the relative path does not map to a file name.
-        """
-        relpath: str = Common.fix_slashes(os.path.relpath(xml_path, self.settings.project_path))
+        xml_path = fix_slashes(xml_path)
 
         for path in self.settings.packages:
-            if relpath.startswith(path):
+            if xml_path.startswith(path):
                 return self.settings.packages[path]
 
-        raise FileNotFoundError(f'Cannot find PAK file by path: {relpath}')
+        raise FileNotFoundError(f'Cannot find PAK file by path: {xml_path}')
 
     def _get_signature_by_path(self, path: str) -> tuple:
-        """
-        Retrieves element signature from path.
-
-        Raises ``NotImplementedError`` if path not found in signatures map.
-        """
-        path = Common.fix_slashes(path)
+        path = fix_slashes(path)
 
         for i, key in enumerate(self.settings.signatures):
             signature_key: str = next(iter(key))
@@ -112,132 +44,197 @@ class Patcher:
 
         raise NotImplementedError(f'Cannot find signature by path: {path}')
 
-    def patch_data(self, xml_file_list: list) -> None:
-        """
-        Copies source, replaces existing rows with modified rows, and appends assumed new rows that cannot be found in source.
+    @staticmethod
+    def find_row_differences(project_row: etree.Element, game_row: etree.Element) -> set:
+        results = set()
 
-        Writes out XML to file in the build path.
-        """
-
-        # hold game paks in memory
-        game_paks: dict = dict()
-
-        for xml_file in xml_file_list:
-            relative_xml_path: str = os.path.relpath(xml_file, self.settings.project_data_path)
-
-            project_xml_path: str = os.path.join(self.settings.project_data_path, relative_xml_path)
-
-            Log.info(f'Patching XML file: "{relative_xml_path}"')
-            Log.debug(f'Source: "{project_xml_path}"', prefix='\t')
-
-            pak_file_name: str = self._get_pak_by_path(project_xml_path)
-
-            # we don't want to open the same game pak more than once
-            if pak_file_name not in game_paks:
-                # open game pak and store object in memory
-                game_pak_path: str = os.path.join(self.settings.game_path, 'Data', pak_file_name)
-                game_paks[pak_file_name] = ZipFileFixed(game_pak_path, mode='r')
-
-            arcname: str = relative_xml_path.replace(os.path.sep, os.path.altsep)
-
-            with game_paks[pak_file_name].open(arcname, 'r') as game_xml:
-                # we can't use etree.parse() because we need to replace elements in _merge_rows()
-                lines: list = game_xml.read().splitlines()
-
-            output_xml: etree._Element = etree.fromstringlist(lines, XML_PARSER)
-
-            # merge rows based on signature lookup
-            project_xml_tree: etree._ElementTree = etree.parse(project_xml_path, XML_PARSER)
-
-            rows: list = PRECOMPILED_XPATH_ROW.evaluate(project_xml_tree)
-            if not rows:
-                Log.warn(f'No rows found. Cannot merge: "{project_xml_path}"')
+        for project_key, project_value in project_row.attrib.items():
+            if project_key not in game_row.attrib:
+                results.add(project_key)
                 continue
 
-            signatures: tuple = self._get_signature_by_path(project_xml_path)
+            if project_value != game_row.get(project_key):
+                results.add(project_key)
+                continue
 
-            self._merge_rows(rows, signatures, output_xml)
+        return results
 
-            build_xml_file_path: str = os.path.join(self.settings.build_data_path, relative_xml_path)
+    @staticmethod
+    def find_root(element: etree.Element, tag: str) -> etree.Element:
+        while element.getparent().tag != tag:
+            element = element.getparent()
+        return element.getparent()
 
-            tree: etree._ElementTree = etree.ElementTree(output_xml, parser=XML_PARSER)
-            tree.write(build_xml_file_path, encoding='utf-8', pretty_print=True, xml_declaration=True)
+    def patch_data(self, xml_file_list: list) -> None:
+        game_paks = {}
+
+        for xml_file in xml_file_list:
+            project_xml_path_relative = os.path.relpath(xml_file, self.settings.project_data_path)
+            project_xml_path_absolute = os.path.join(self.settings.project_data_path, project_xml_path_relative)
+
+            element_name, element_attributes = self._get_signature_by_path(project_xml_path_absolute)
+
+            Log.info(f'Patching XML file: "{project_xml_path_relative}"')
+            Log.debug(f'Source: "{project_xml_path_absolute}"',
+                      prefix='\t')
+
+            game_pak_filename = self._get_game_pak_by_absolute_xml_path(project_xml_path_absolute)
+
+            game_pak_arcname = project_xml_path_relative.replace(os.path.sep, os.path.altsep)
+
+            # we don't want to open the same game pak more than once
+            if game_pak_filename not in game_paks:
+                # open game pak and store object in memory
+                game_pak_path = os.path.join(self.settings.game_path, 'Data', game_pak_filename)
+                game_paks.update({
+                    game_pak_filename: ZipFileFixed(game_pak_path, 'r')})
+
+            with game_paks[game_pak_filename].open(game_pak_arcname, 'r') as game_xml:
+                game_xml_tree = etree.parse(game_xml, XML_PARSER)
+                game_xpath = etree.XPathEvaluator(game_xml_tree)
+
+            project_xml_tree = etree.parse(project_xml_path_absolute, XML_PARSER)
+
+            project_rows: list = PRECOMPILED_XPATH_ROW(project_xml_tree)
+
+            if len(project_rows) == 0:
+                Log.warn(f'No rows found. Skipping: "{project_xml_path_absolute}"')
+                continue
+
+            project_xpath = etree.XPathEvaluator(project_xml_tree)
+            column_data = {column.get('name').lower(): column.get('type').lower()
+                           for column in project_xpath('//column')}
+
+            duplicate_rows = set()
+
+            for project_row in project_rows:
+                project_row_parent = project_row.getparent()
+                project_row_index = project_row_parent.index(project_row)
+
+                element_attrs = ' and '.join([f'@{key}="{project_row.get(key)}"'
+                                              for key in sorted(element_attributes)])
+
+                matching_rows: list = game_xpath(f'//{element_name}[{element_attrs}]')
+
+                if len(matching_rows) == 0:
+                    continue
+
+                if len(matching_rows) > 1:
+                    raise Exception('Too many matching rows')
+
+                if different_keys := self.find_row_differences(project_row, matching_rows[0]):
+                    if any(column_data[key] == 'real' for key in different_keys):
+                        duplicate_row = copy.deepcopy(project_row)
+
+                        workaround_needed = False
+                        for attr in (key for key in different_keys if column_data[key] == 'real'):
+                            if Decimal(project_row.get(attr)) < Decimal(1.0):
+                                duplicate_row.set(attr, '8772')
+                                workaround_needed = True
+
+                        if workaround_needed:
+                            project_row_parent.insert(project_row_index, duplicate_row)
+                            project_row_parent.insert(project_row_index, etree.Comment(' WORKAROUND '))
+                else:
+                    project_row_parent.remove(project_row)
+                    duplicate_rows.add(True)
+
+            if (count := len(duplicate_rows)) > 0:
+                Log.warn(f'Removed {count} duplicate rows.', prefix='\t')
+
+            build_xml_file_path = os.path.join(self.settings.build_data_path, project_xml_path_relative)
+
+            target_folder = os.path.dirname(build_xml_file_path)
+            os.makedirs(target_folder, exist_ok=True)
+
+            output_database = self.find_root(project_rows[0], 'database')
+
+            output_tree: etree.ElementTree = etree.ElementTree(output_database, parser=XML_PARSER_ALLOW_COMMENTS)
+            output_tree.write(build_xml_file_path, encoding='utf-8', pretty_print=True, xml_declaration=True)
 
         # close game paks open in memory
         for pak_file_path in game_paks:
             game_paks[pak_file_path].close()
 
     def patch_localization(self, xml_file_list: list) -> None:
-        """
-        Constructs XML in memory, seeds with modified rows, and appends unmodified source rows.
-
-        Writes out XML to file in the build path.
-        """
-
-        project_i18n_path: str = self.settings.project_i18n_path
-        build_i18n_path: str = self.settings.build_localization_path
-        localization: list = self.settings.localization
-
-        # hold game paks in memory
-        game_paks: dict = dict()
+        game_paks = {}
 
         # filter out unsupported xml files - we can arbitrarily add these later but we can't patch them
-        xml_file_list = [f for f in xml_file_list if os.path.basename(f) in localization]
+        xml_file_list = (f for f in xml_file_list if os.path.basename(f) in self.settings.localization)
 
         for xml_file in xml_file_list:
-            relative_xml_path: str = os.path.relpath(xml_file, project_i18n_path)
-            build_xml_path: str = os.path.join(build_i18n_path, relative_xml_path)
+            source_i18n_path_relative = os.path.relpath(xml_file, self.settings.project_i18n_path)
+            target_i18n_path_absolute = os.path.join(self.settings.build_localization_path, source_i18n_path_relative)
 
-            parent_path, file_name = os.path.split(relative_xml_path)
+            parent_path, file_name = os.path.split(source_i18n_path_relative)
+            project_xml_path = os.path.join(self.settings.project_i18n_path, source_i18n_path_relative)
 
-            project_xml_path: str = os.path.join(project_i18n_path, relative_xml_path)
-
-            Log.info(f'Patching XML file: "{relative_xml_path}"')
+            Log.info(f'Patching XML file: "{source_i18n_path_relative}"')
             Log.debug(f'project_xml_path="{project_xml_path}"', prefix='\t')
 
-            project_xml_tree: etree._ElementTree = etree.parse(project_xml_path, XML_PARSER)
-            rows: list = PRECOMPILED_XPATH_ROW.evaluate(project_xml_tree)
+            project_rows: list = PRECOMPILED_XPATH_ROW(etree.parse(project_xml_path, XML_PARSER))
 
-            if not rows:
+            if len(project_rows) == 0:
                 Log.warn(f'No rows found. Cannot patch: "{project_xml_path}"')
                 continue
 
-            # create output xml
-            output_xml: etree._Element = etree.Element('Table')
-            self._try_clone_text_cells(rows, output_xml)
+            project_table = project_rows[0].getparent()
 
             # read zipped pak xml
-            pak_file_name: str = os.path.join(self.settings.game_path, 'Localization', parent_path + '.pak')
+            game_pak_filename = os.path.join(self.settings.game_path, 'Localization', parent_path + '.pak')
 
-            if not os.path.exists(pak_file_name):
-                Log.warn(f'Cannot find game package: "{pak_file_name}"')
+            if not os.path.exists(game_pak_filename):
+                Log.warn(f'Cannot find game package: "{game_pak_filename}"')
                 Log.warn(f'Skipped patching: "{project_xml_path}"')
                 continue
 
             # we don't want to open the same game pak more than once
-            if pak_file_name not in game_paks:
-                # open game pak and store object in memory
-                game_paks[pak_file_name] = ZipFileFixed(pak_file_name, mode='r')
+            if game_pak_filename not in game_paks:
+                game_paks.update({
+                    game_pak_filename: ZipFileFixed(game_pak_filename)
+                })
 
-            with game_paks[pak_file_name].open(file_name, mode='r') as game_xml:
-                # we can't use etree.parse() because we need to replace elements in _merge_string_rows()
-                lines: list = game_xml.read().splitlines()
+            with game_paks[game_pak_filename].open(file_name) as f:
+                game_tree = etree.parse(f, XML_PARSER)
+                game_xpath = etree.XPathEvaluator(game_tree)
 
-            game_tree: etree._ElementTree = etree.fromstringlist(lines, XML_PARSER)
-            game_rows: list = PRECOMPILED_XPATH_ROW.evaluate(game_tree)
+            duplicate_rows = set()
 
-            # create row data for comparing keys
-            signatures: set = self._get_string_keys(output_xml)
+            for project_row in project_rows:
+                assert (count := len(project_row)) >= 2 and count <= 3
 
-            self._merge_string_rows(game_rows, signatures, output_xml)
+                if len(project_row) == 2:
+                    project_key, project_source = (c.text for c in list(project_row))
 
-            # sort output xml by key
-            output_rows: list = PRECOMPILED_XPATH_ROW.evaluate(output_xml)
-            output_xml[:] = sorted(output_rows, key=PRECOMPILED_XPATH_CELL.evaluate)
+                    # we allow two cells but the output requires three cells
+                    project_source_cell = list(project_row)[1]
+                    project_row.append(copy.deepcopy(project_source_cell))
+                else:
+                    project_key, project_source, _ = (c.text for c in list(project_row))
 
-            with open(build_xml_path, mode='w', encoding='utf-8'):
-                et: etree._ElementTree = etree.ElementTree(output_xml, parser=XML_PARSER)
-                et.write(build_xml_path, encoding='utf-8', pretty_print=True)
+                matching_cells: list = game_xpath(f'//Row/Cell[text()="{project_key}"]')
+
+                if len(matching_cells) == 0:
+                    continue
+
+                if len(matching_cells) > 1:
+                    raise Exception('Too many matching rows in game tree')
+
+                game_row = matching_cells[0].getparent()
+                _, game_source, game_translation = (c.text for c in list(game_row))
+
+                if any(project_source == text for text in [game_source, game_translation]):
+                    project_table.remove(project_row)
+                    duplicate_rows.add(project_key)
+
+            if (count := len(duplicate_rows)) > 0:
+                Log.warn(f'Removed {count} duplicate rows.', prefix='\t')
+
+            output_root = self.find_root(project_rows[0], 'Table')
+
+            with open(target_i18n_path_absolute, 'w', encoding='utf-8'):
+                output_tree = etree.ElementTree(output_root, parser=XML_PARSER_ALLOW_COMMENTS)
+                output_tree.write(target_i18n_path_absolute, encoding='utf-8', pretty_print=True)
 
         # close game paks open in memory
         for pak_file_path in game_paks:

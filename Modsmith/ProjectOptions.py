@@ -1,11 +1,11 @@
 import os
-
 from argparse import Namespace
-from dataclasses import dataclass, field
+from dataclasses import (dataclass,
+                         field)
 
 from lxml import etree
 
-from Modsmith.Constants import XML_PARSER
+from modsmith import XML_PARSER
 
 
 @dataclass

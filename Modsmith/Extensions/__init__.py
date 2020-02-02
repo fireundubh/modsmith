@@ -1,2 +1,2 @@
-from Modsmith.Extensions.HelpFormatterEx import HelpFormatterEx
-from Modsmith.Extensions.ZipFileFixed import ZipFileFixed
+from modsmith.Extensions.HelpFormatterEx import HelpFormatterEx
+from modsmith.Extensions.ZipFileFixed import ZipFileFixed

@@ -1,5 +1,6 @@
 ---
 Exclusions:
+ - .tbl
  - Data/_fastload
  - Data/Animations
  - Data/Engine

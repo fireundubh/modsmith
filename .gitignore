@@ -2,6 +2,7 @@
 .mypy_cache/
 bin/
 Build/
+dev/
 example_projects/
 test_data/
 Modsmith.build/
