@@ -1358,7 +1358,7 @@ Signatures:
  - Data/Libs/Tables/rpg/perk_buff.xml:
    - element: row
      attributes:
-     - buff_id
+     - perk_id
  - Data/Libs/Tables/rpg/perk_buff_override.xml:
    - element: row
      attributes:
