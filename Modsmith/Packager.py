@@ -8,7 +8,11 @@ from typing import Generator
 from zipfile import (ZIP_DEFLATED,
                      ZIP_STORED)
 
-from modsmith import (Patcher,
+from lxml import etree
+
+from modsmith import (PRECOMPILED_XPATH_ROW,
+                      XML_PARSER,
+                      Patcher,
                       ProjectSettings,
                       SimpleLogger as Log,
                       ZipFileFixed)
@@ -99,7 +103,7 @@ class Packager:
                                                               project_files_xml_unsupported, project_files_other):
                 base_name = os.path.basename(arcname)
 
-                if '__' not in base_name:
+                if '__' not in base_name and filename.lower().endswith('.xml'):
                     file_name, file_extension = os.path.splitext(base_name)
 
                     arcname = '%s%s__%s%s' % (arcname[:-len(base_name)],
@@ -162,24 +166,28 @@ class Packager:
             os.makedirs(target_folder, exist_ok=True)
 
             with ZipFileFixed(lang_pak_file_name, 'w', ZIP_STORED) as zip_file:
+                rows = []
+
                 for filename in glob.iglob(glob_build_lang_xml, recursive=False):
-                    arcname: str = os.path.relpath(filename, build_lang_path)
+                    xml_tree = etree.parse(filename, XML_PARSER)
+                    xml_rows = PRECOMPILED_XPATH_ROW(xml_tree)
+                    rows.extend(xml_rows)
 
-                    base_name = os.path.basename(arcname)
+                merged_file_name = f'text__{self.settings.pak_file_name.lower().replace(" ", "_")}.xml'
 
-                    if '__' not in base_name:
-                        file_name, file_extension = os.path.splitext(base_name)
+                table = etree.Element('Table')
+                table.extend(rows)
 
-                        arcname = '%s%s__%s%s' % (arcname[:-len(base_name)],
-                                                  file_name,
-                                                  self.settings.pak_file_name.lower().replace(' ', '_'),
-                                                  file_extension)
+                root = etree.ElementTree(table, parser=XML_PARSER)
+                root.write(os.path.join(build_lang_path, merged_file_name), encoding='utf-8', pretty_print=True, xml_declaration=False)
 
-                    zip_file.write(filename, arcname)
+                arcname: str = os.path.relpath(os.path.join(build_lang_path, merged_file_name), build_lang_path)
 
-                    Log.info(f'File added to PAK: "{self.settings.make_project_relative(filename)}"')
-                    Log.debug(f'arcname="{arcname}"',
-                              prefix='\t')
+                zip_file.write(filename, arcname)
+
+                Log.info(f'File added to PAK: "{self.settings.make_project_relative(filename)}"')
+                Log.debug(f'arcname="{arcname}"',
+                          prefix='\t')
 
     def pack(self) -> str:
         """Writes build assets to ZIP file. Returns output ZIP file path."""
