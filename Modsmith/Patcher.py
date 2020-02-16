@@ -123,20 +123,8 @@ class Patcher:
                 if len(matching_rows) > 1:
                     raise Exception('Too many matching rows')
 
-                if different_keys := self.find_row_differences(project_row, matching_rows[0]):
-                    if any(column_data[key] == 'real' for key in different_keys):
-                        duplicate_row = copy.deepcopy(project_row)
-
-                        workaround_needed = False
-                        for attr in (key for key in different_keys if column_data[key] == 'real'):
-                            if Decimal(project_row.get(attr)) < Decimal(1.0):
-                                duplicate_row.set(attr, '8772')
-                                workaround_needed = True
-
-                        if workaround_needed:
-                            project_row_parent.insert(project_row_index, duplicate_row)
-                            project_row_parent.insert(project_row_index, etree.Comment(' WORKAROUND '))
-                else:
+                different_keys = self.find_row_differences(project_row, matching_rows[0])
+                if not different_keys or len(different_keys) == 0:
                     project_row_parent.remove(project_row)
                     duplicate_rows.add(True)
 
